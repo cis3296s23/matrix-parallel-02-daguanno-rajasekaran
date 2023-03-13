@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
         start = clock();
         mmultTarget = mmult(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
         end = clock();
-        total = (double)(end - start);
+        totalTime = (double)(end - start);
         printf("Total time for mmult: %f", totalTime);
 
         mmult_simdTarget = mmult_simd(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
