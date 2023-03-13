@@ -32,17 +32,17 @@ int main(int argc, char *argv[]) {
 
         //test each matrix with timer
 
-        *mmultTarget = mmult(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
+        mmultTarget = mmult(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
 
-        *mmult_simdTarget = mmult_simd(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
+        mmult_simdTarget = mmult_simd(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
 
         //double *mmult_ompTarget = mmult_omp(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
 
         //double *mmult_mpi_ompTarget = mmult_mpi_omp(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
 
         // compare each matrix without timer
-        compare_matrices(*c_actual, mmultTarget, matrixSize, matrixSize);
-        compare_matrices(*c_actual, mmult_simdTarget, matrixSize, matrixSize);
+        compare_matrices(c_actual, mmultTarget, matrixSize, matrixSize);
+        compare_matrices(c_actual, mmult_simdTarget, matrixSize, matrixSize);
         //compare_matrices(*c_actual, *mmult_ompTarget, matrixSize, matrixSize);
         //compare_matrices(*c_actual, *mmult_mpi_ompTarget, matrixSize, matrixSize);
 
