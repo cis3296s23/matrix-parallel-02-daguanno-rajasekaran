@@ -21,7 +21,10 @@ double *gen_matrix(int n, int m) {
     double *a = malloc(sizeof(double) * n * m);
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
-            a[i*m + j] = (double)rand() / RAND_MAX;
+            a[i*m + j] = (double)(10.0 * (rand() / (RAND_MAX + 1.0)));
+            double  rand = a[i*m + j];
+            //printf("rand: %f, ", rand);
+            //printf("a[%d] = %f", i*m+j, a[i*m+j]);
         }
     }
     return a;
