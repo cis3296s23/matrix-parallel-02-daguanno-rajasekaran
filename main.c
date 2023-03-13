@@ -15,13 +15,16 @@ int main(int argc, char *argv[]) {
     srand(time(NULL));
     int matrixSize = rand() % 10;
     
-    for (int i = 0; i < numTests; i++) {
+    //for (int i = 0; i < numTests; i++) {
         //initialize clock
         clock_t start, end;
 
-        //generate matrices and allocate memory for target matrix calculation
-        double *a = malloc(gen_matrix(matrixSize, matrixSize));
-        double *b = malloc(gen_matrix(matrixSize, matrixSize));
+        //allocate memory for target matrix calculation
+        double *a, *b = malloc(matrixSize * matrixSize * sizeof(double));
+
+        //generate matrices
+        double *a = gen_matrix(matrixSize, matrixSize);
+        double *b = gen_matrix(matrixSize, matrixSize);
         double *c_calc = malloc(matrixSize * matrixSize * sizeof(double));
 
         //calculte Target with mmult
@@ -56,5 +59,5 @@ int main(int argc, char *argv[]) {
         free(mmult_simdTarget);
         //free(mmult_ompTarget);
         //free(mmult_mpi_ompTarget);
-    }
+    //}
 }
