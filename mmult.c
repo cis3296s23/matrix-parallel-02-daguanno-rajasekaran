@@ -33,5 +33,5 @@ double* mmult(double *c,
         }
     }
 
-  return *c;
+  return c;
 }
