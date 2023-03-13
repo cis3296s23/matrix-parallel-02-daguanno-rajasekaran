@@ -15,6 +15,8 @@ int main(int argc, char *argv[]) {
 
     srand(time(NULL));
     int matrixSize = rand() % 10;
+
+    printf("matrix size: %d", matrixSize);
     
     //for (int i = 0; i < numTests; i++) {
         //initialize clock
