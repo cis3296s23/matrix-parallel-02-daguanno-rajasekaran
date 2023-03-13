@@ -5,6 +5,7 @@
 
 #include "mmult_simd.c"
 #include "mmult.c"
+#include "mat.c"
 //#include "mmult_omp.c"
 //#include "mmult_mpi_omp.c"
 #include "mat.h"
@@ -24,6 +25,7 @@ int main(int argc, char *argv[]) {
         double *b = malloc(matrixSize * matrixSize * sizeof(double));
         double *mmultTarget = malloc(matrixSize * matrixSize * sizeof(double));
         double *mmult_simdTarget = malloc(matrixSize * matrixSize * sizeof(double));
+
 
         //generate matrices
         *a = *gen_matrix(matrixSize, matrixSize);
