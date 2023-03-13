@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
         //clock_t start, end;
 
         //allocate memory for target matrix calculation
-        double *a, *b, mmultTarget, mmult_simdTarget = malloc(matrixSize * matrixSize * sizeof(double));
+        double *a, *b, *mmultTarget, *mmult_simdTarget = malloc(matrixSize * matrixSize * sizeof(double));
 
         //generate matrices
         *a = gen_matrix(matrixSize, matrixSize);
@@ -41,15 +41,15 @@ int main(int argc, char *argv[]) {
         //double *mmult_mpi_ompTarget = mmult_mpi_omp(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
 
         // compare each matrix without timer
-        compare_matrices(*c_actual, *mmultTarget, matrixSize, matrixSize);
-        compare_matrices(*c_actual, *mmult_simdTarget, matrixSize, matrixSize);
+        compare_matrices(*c_actual, mmultTarget, matrixSize, matrixSize);
+        compare_matrices(*c_actual, mmult_simdTarget, matrixSize, matrixSize);
         //compare_matrices(*c_actual, *mmult_ompTarget, matrixSize, matrixSize);
         //compare_matrices(*c_actual, *mmult_mpi_ompTarget, matrixSize, matrixSize);
 
         //print matrix for fun
-        print_matrix(*a, matrixSize, matrixSize);
-        print_matrix(*b, matrixSize, matrixSize);
-        print_matrix(*c_actual, matrixSize, matrixSize);
+        print_matrix(a, matrixSize, matrixSize);
+        print_matrix(b, matrixSize, matrixSize);
+        print_matrix(c_actual, matrixSize, matrixSize);
 
         //free all memory
         free(a);
