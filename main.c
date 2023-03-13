@@ -20,7 +20,10 @@ int main(int argc, char *argv[]) {
         //clock_t start, end;
 
         //allocate memory for target matrix calculation
-        double *a, *b, *mmultTarget, *mmult_simdTarget = malloc(matrixSize * matrixSize * sizeof(double));
+        double *a = malloc(matrixSize * matrixSize * sizeof(double));
+        double *b = malloc(matrixSize * matrixSize * sizeof(double));
+        double *mmultTarget = malloc(matrixSize * matrixSize * sizeof(double));
+        double *mmult_simdTarget = malloc(matrixSize * matrixSize * sizeof(double));
 
         //generate matrices
         *a = *gen_matrix(matrixSize, matrixSize);
