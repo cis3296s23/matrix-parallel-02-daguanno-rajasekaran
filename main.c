@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     //int numTests = 1;
 
     srand(time(NULL));
-    int matrixSize = rand() % 100;
+    int matrixSize = (rand() % 100) + 15;
 
     printf("matrix size: %d\n", matrixSize);
     
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
         mmultTarget = mmult(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
         end = clock();
         totalTime = (double)(end - start);
-        printf("Total time for mmult: %f", totalTime);
+        printf("Total time for mmult: %f\n", totalTime);
 
         mmult_simdTarget = mmult_simd(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
 
@@ -58,14 +58,17 @@ int main(int argc, char *argv[]) {
         //compare_matrices(*c_actual, *mmult_mpi_ompTarget, matrixSize, matrixSize);
 
         //print matrix for fun
+        printf("matrix a: \n");
         print_matrix(a, matrixSize, matrixSize);
+        printf("matrix b: \n");
         print_matrix(b, matrixSize, matrixSize);
+        printf("matrix c: \n");
         print_matrix(c_actual, matrixSize, matrixSize);
 
         //free all memory
         free(a);
         free(b);
-        free(c_actual);
+        //free(c_actual);
         free(mmultTarget);
         free(mmult_simdTarget);
         //free(mmult_ompTarget);
