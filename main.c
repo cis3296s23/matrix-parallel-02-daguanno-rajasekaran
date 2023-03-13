@@ -14,13 +14,14 @@ int main(int argc, char *argv[]) {
     //int numTests = 1;
 
     srand(time(NULL));
-    int matrixSize = rand() % 10;
+    int matrixSize = rand() % 100;
 
-    printf("matrix size: %d", matrixSize);
+    printf("matrix size: %d\n", matrixSize);
     
     //for (int i = 0; i < numTests; i++) {
         //initialize clock
-        //clock_t start, end;
+        clock_t start, end;
+        double totalTime = 0;
 
         //allocate memory for target matrix calculation
         double *a = malloc(matrixSize * matrixSize * sizeof(double));
@@ -38,8 +39,11 @@ int main(int argc, char *argv[]) {
         double *c_actual = mmult(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
 
         //test each matrix with timer
-
+        start = clock();
         mmultTarget = mmult(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
+        end = clock();
+        total = (double)(end - start);
+        printf("Total time for mmult: %f", total);
 
         mmult_simdTarget = mmult_simd(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
 
