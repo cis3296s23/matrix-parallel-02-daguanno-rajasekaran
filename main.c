@@ -23,8 +23,8 @@ int main(int argc, char *argv[]) {
         double *a, *b, *mmultTarget, *mmult_simdTarget = malloc(matrixSize * matrixSize * sizeof(double));
 
         //generate matrices
-        *a = gen_matrix(matrixSize, matrixSize);
-        *b = gen_matrix(matrixSize, matrixSize);
+        *a = *gen_matrix(matrixSize, matrixSize);
+        *b = *gen_matrix(matrixSize, matrixSize);
         double *c_calc = malloc(matrixSize * matrixSize * sizeof(double));
 
         //calculte Target with mmult
