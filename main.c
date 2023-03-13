@@ -10,14 +10,14 @@
 #include "mat.h"
 
 int main(int argc, char *argv[]) {
-    int numTests = 1;
+    //int numTests = 1;
 
     srand(time(NULL));
     int matrixSize = rand() % 10;
     
     //for (int i = 0; i < numTests; i++) {
         //initialize clock
-        clock_t start, end;
+        //clock_t start, end;
 
         //allocate memory for target matrix calculation
         double *a, *b, mmultTarget, mmult_simdTarget = malloc(matrixSize * matrixSize * sizeof(double));

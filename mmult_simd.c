@@ -3,7 +3,7 @@
 #include<math.h>
 #include "mat.h"
 
-int mmult_simd(double *c, double *a, int aRows, int aCols, double *b, int bRows, int bCols) {
+double* mmult_simd(double *c, double *a, int aRows, int aCols, double *b, int bRows, int bCols) {
 
   int i, j, k, l = 0;
   
@@ -16,5 +16,5 @@ int mmult_simd(double *c, double *a, int aRows, int aCols, double *b, int bRows,
       }
     }
   }
-  return 0;
+  return c;
 }
