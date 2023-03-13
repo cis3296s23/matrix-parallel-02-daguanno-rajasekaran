@@ -5,8 +5,8 @@
 
 #include "mmult_simd.c"
 #include "mmult.c"
-#include "mmult_omp.c"
-#include "mmult_mpi_omp.c"
+//#include "mmult_omp.c"
+//#include "mmult_mpi_omp.c"
 #include "mat.h"
 
 int main(int argc, char *argv[]) {
@@ -33,15 +33,15 @@ int main(int argc, char *argv[]) {
 
         double *mmult_simdTarget = mmult_simd(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
 
-        double *mmult_ompTarget = mmult_omp(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
+        //double *mmult_ompTarget = mmult_omp(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
 
-        double *mmult_mpi_ompTarget = mmult_mpi_omp(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
+        //double *mmult_mpi_ompTarget = mmult_mpi_omp(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
 
         // compare each matrix without timer
         compare_matrices(*c_actual, *mmultTarget, matrixSize, matrixSize);
         compare_matrices(*c_actual, *mmult_simdTarget, matrixSize, matrixSize);
-        compare_matrices(*c_actual, *mmult_ompTarget, matrixSize, matrixSize);
-        compare_matrices(*c_actual, *mmult_mpi_ompTarget, matrixSize, matrixSize);
+        //compare_matrices(*c_actual, *mmult_ompTarget, matrixSize, matrixSize);
+        //compare_matrices(*c_actual, *mmult_mpi_ompTarget, matrixSize, matrixSize);
 
         //print matrix for fun
         print_matrix(*a);
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
         free(c_actual);
         free(mmultTarget);
         free(mmult_simdTarget);
-        free(mmult_ompTarget);
-        free(mmult_mpi_ompTarget);
+        //free(mmult_ompTarget);
+        //free(mmult_mpi_ompTarget);
     }
 }
