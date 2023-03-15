@@ -35,4 +35,3 @@ int main(void) {
     free(b);
     free(c_actual);
 }
-

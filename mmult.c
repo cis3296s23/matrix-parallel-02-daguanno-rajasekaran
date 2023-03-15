@@ -20,7 +20,7 @@
  * @param bCols : the number of columns in b.
  * @return 0 if the matrix multiplication is successful.
  */
-double* mmult(double *c, 
+double mmult(double *c, 
 	      double *a, int aRows, int aCols, 
 	      double *b, int bRows, int bCols) {
 
@@ -32,6 +32,5 @@ double* mmult(double *c,
             }
         }
     }
-
-  return c;
+    return 0;
 }
