@@ -38,9 +38,18 @@ test_mmult:	test_mmult.c mmult.c mat.c
 run_test_mmult: test_mmult
 	./test_mmult
 
+test_mmult_simd: test_mmult_simd.c mmult_simd.c mat.c
+	gcc test_mmult_simd.c mmult_simd.c mat.c -lm -o test_mmult_simd
+
+run_test_mmult_simd: test_mmult_simd
+	./test_mmult_simd
+
+test_mmult_simd_o3: test_mmult_simd.c mmult_simd.c mat.c
+	gcc -O3 test_mmult_simd.c mmult_simd.c mat.c -lm -o test_mmult_simd
+
+run_test_mmult_simd_o3: test_mmult_simd
+	./test_mmult_simd
+
 clean:
 	rm -f *.o
 	rm -f ${PGMS}
-
-
-
