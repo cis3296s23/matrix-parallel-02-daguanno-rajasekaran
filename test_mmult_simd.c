@@ -2,6 +2,8 @@
 #include <stdlib.h>
 
 #include "mat.h"
+#include "mat.c"
+#include "mmult.c"
 
 #define MAT_SIZE 5
 
@@ -20,9 +22,9 @@ int test_unoptimized(double *a, int arows, int acols,
 }
 
 int main(void) {
-    double *a = read_matrix_from_file("a.txt");
-    double *b = read_matrix_from_file("b.txt");
-    double *c_actual = read_matrix_from_file("c.txt");
+    double *a = read_matrix_from_file("m1.txt");
+    double *b = read_matrix_from_file("m2.txt");
+    double *c_actual = read_matrix_from_file("m3.txt");
     double *c_calc = malloc(MAT_SIZE * MAT_SIZE * sizeof(double));
 
     if(!test_unoptimized(a, MAT_SIZE, MAT_SIZE, b, MAT_SIZE, MAT_SIZE, c_actual)) {
