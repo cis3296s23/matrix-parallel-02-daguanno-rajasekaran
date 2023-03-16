@@ -15,14 +15,14 @@ int main(int argc, char *argv[]) {
     int matrixSize = 0;
     
     int i = 0;
-    for (i; i < 1000; i = i + 50) {
+    for (i; i < 2000; i = i + 50) {
 
         matrixSize = i;
-        //printf("Matrix size: %d\n", matrixSize);
+        printf("Matrix size: %d\n", matrixSize);
 
         //initialize clock
         clock_t start, end;
-        double totalTime = 0;
+        int totalTime = 0;
 
         //allocate memory for target matrix calculation
         double *a = malloc(matrixSize * matrixSize * sizeof(double));
@@ -41,25 +41,25 @@ int main(int argc, char *argv[]) {
         //double *c_actual = mmult(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
 
         //test each matrix with timer
-        start = clock();
-        mmult(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
-        end = clock();
-        totalTime = (double)(end - start);
-        printf("Total time for mmult: %f\n", totalTime);
+        // start = clock();
+        // mmult(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
+        // end = clock();
+        // totalTime = (int)(end - start);
+        // printf("Total time for mmult: %d\n", totalTime);
         //printf("%f\n", totalTime);
 
-        start = clock();
+        // start = clock();
         mmult_simd(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
         end = clock();
-        totalTime = (double)(end - start);
-        printf("Total time for mmult_simd: %f\n", totalTime);
+        totalTime = (int)(end - start);
+        printf("Total time for mmult_simd: %d\n", totalTime);
         //printf("%f\n", totalTime);
 
         start = clock();
         mmult_omp(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
         end = clock();
-        totalTime = (double)(end - start);
-        printf("Total time for mmult_omp: %f\n", totalTime);
+        totalTime = (int)(end - start);
+        printf("Total time for mmult_omp: %d\n", totalTime);
         //printf("%f\n", totalTime);
 
         /*

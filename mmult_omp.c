@@ -1,4 +1,5 @@
 #include "mat.h"
+#include "omp.h"
 
 /**
  * An algorithm for matrix multiplication using OMP.
