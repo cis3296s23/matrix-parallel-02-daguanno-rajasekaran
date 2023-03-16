@@ -55,14 +55,12 @@ int main(int argc, char *argv[]) {
         printf("Total time for mmult_simd: %f\n", totalTime);
         //printf("%f\n", totalTime);
 
-        /*
         start = clock();
         mmult_omp(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
         end = clock();
         totalTime = (double)(end - start);
-        printf("Total time for mmult_simd: %f\n", totalTime);
+        printf("Total time for mmult_omp: %f\n", totalTime);
         //printf("%f\n", totalTime);
-        */
 
         /*
         start = clock();
