@@ -22,9 +22,6 @@ double *gen_matrix(int n, int m) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
             a[i*m + j] = (double)(10.0 * (rand() / (RAND_MAX + 1.0)));
-            double  rand = a[i*m + j];
-            //printf("rand: %f, ", rand);
-            //printf("a[%d] = %f", i*m+j, a[i*m+j]);
         }
     }
     return a;
@@ -112,7 +109,7 @@ double *read_matrix_from_file(const char *path) {
  * @param ncols : the number of columns in the matrix.
  */
 void print_matrix(double *a, int nrows, int ncols) {
-     for(int i = 0; i < ncols; i++) {
+    for(int i = 0; i < ncols; i++) {
         for(int j = 0; j < nrows; j++) {
             printf("%5lf ", a[ncols * i + j]);
         }
