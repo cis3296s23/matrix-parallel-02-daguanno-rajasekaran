@@ -6,7 +6,7 @@
 #include "mmult_simd.c"
 #include "mmult.c"
 #include "mat.c"
-//#include "mmult_omp.c"
+#include "mmult_omp.c"
 //#include "mmult_mpi_omp.c"
 #include "mat.h"
 
