@@ -2,7 +2,8 @@
 #include "omp.h"
 
 /**
- * An algorithm for matrix multiplication using OMP.
+ * An algorithm for
+ * matrix multiplication using OMP.
  * 
  * @param c : the matrix in which to place the result of the matrix multiplication.
  * @param a : the first matrix.
@@ -16,8 +17,6 @@
 double mmult_omp(double *c,
 		      double *a, int aRows, int aCols,
 		      double *b, int bRows, int bCols) {
-
-  // Insert your code here
 
   int i, j, k;
   #pragma omp parallel default(none) shared(a, b, c, aRows, aCols, bRows, bCols) private(i, k, j)
