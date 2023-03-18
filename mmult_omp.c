@@ -1,5 +1,5 @@
 #include "mat.h"
-#include "omp.h"
+#include <omp.h>
 
 /**
  * An algorithm for
