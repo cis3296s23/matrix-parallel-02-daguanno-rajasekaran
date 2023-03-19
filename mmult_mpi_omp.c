@@ -32,6 +32,7 @@ int main(int argc, char* argv[])
     if (argc > 1) {
         nrows = atoi(argv[1]);
         ncols = nrows;
+        printf("size: %d", ncols);
         
         if (myid == 0) {
             // Controller Code goes here
