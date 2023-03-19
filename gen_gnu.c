@@ -15,10 +15,12 @@
 int main(int argc, char *argv[]) {
 
     //test which approaches
-    bool unoptimized = true;
+    bool unoptimized = false;
     bool SIMD = true;
     bool OMP = true;
     bool MPI_OMP = false;
+
+    printf("generating gnuplot data file . . .\n");
 
     FILE * fp;
     fp = fopen ("data.txt", "w+");
@@ -26,9 +28,9 @@ int main(int argc, char *argv[]) {
     if(unoptimized) {
         for (int i = 0; i <= 2000; i = i + 50) {
             fprintf(fp, "%d ", i);
-            //initialize clock
-            clock_t start, end, SIMDStart, SIMDEnd, OMPStart, OMPEnd;
-            int totalTime = 0;
+            
+            //initialize timespec
+            struct timespec tpe, tps;
 
             //allocate memory for target matrix calculation
             double *a = malloc(i * i * sizeof(double));
@@ -40,11 +42,10 @@ int main(int argc, char *argv[]) {
             double *c_calc = malloc(i * i * sizeof(double));
 
             //time matrix multiplication
-            start = clock();
+            clock_gettime(CLOCK_REALTIME, &tps);
             mmult(c_calc, a, i, i, b, i, i);
-            end = clock();
-            totalTime = (int)(end - start);
-            fprintf(fp, "%d\n", totalTime);
+            clock_gettime(CLOCK_REALTIME, &tpe);
+            fprintf(fp, "%f\n", deltaTime(&tps, &tpe));
 
             free(a);
             free(b);
@@ -57,9 +58,9 @@ int main(int argc, char *argv[]) {
     if(SIMD) {
         for (int i = 0; i <= 2000; i = i + 50) {
             fprintf(fp, "%d ", i);
-            //initialize clock
-            clock_t start, end, SIMDStart, SIMDEnd, OMPStart, OMPEnd;
-            int totalTime = 0;
+            
+            //initialize timespec
+            struct timespec tpe, tps;
 
             //allocate memory for target matrix calculation
             double *a = malloc(i * i * sizeof(double));
@@ -71,11 +72,10 @@ int main(int argc, char *argv[]) {
             double *c_calc = malloc(i * i * sizeof(double));
 
             //time matrix multiplication
-            start = clock();
+            clock_gettime(CLOCK_REALTIME, &tps);
             mmult_simd(c_calc, a, i, i, b, i, i);
-            end = clock();
-            totalTime = (int)(end - start);
-            fprintf(fp, "%d\n", totalTime);
+            clock_gettime(CLOCK_REALTIME, &tpe);
+            fprintf(fp, "%f\n", deltaTime(&tps, &tpe));
 
             free(a);
             free(b);
@@ -88,9 +88,9 @@ int main(int argc, char *argv[]) {
     if(OMP) {
         for (int i = 0; i <= 2000; i = i + 50) {
             fprintf(fp, "%d ", i);
-            //initialize clock
-            clock_t start, end, SIMDStart, SIMDEnd, OMPStart, OMPEnd;
-            int totalTime = 0;
+            
+            //initialize timespec
+            struct timespec tpe, tps;
 
             //allocate memory for target matrix calculation
             double *a = malloc(i * i * sizeof(double));
@@ -102,11 +102,10 @@ int main(int argc, char *argv[]) {
             double *c_calc = malloc(i * i * sizeof(double));
 
             //time matrix multiplication
-            start = clock();
+            clock_gettime(CLOCK_REALTIME, &tps);
             mmult_omp(c_calc, a, i, i, b, i, i);
-            end = clock();
-            totalTime = (int)(end - start);
-            fprintf(fp, "%d\n", totalTime);
+            clock_gettime(CLOCK_REALTIME, &tpe);
+            fprintf(fp, "%f\n", deltaTime(&tps, &tpe));
 
             free(a);
             free(b);
@@ -119,9 +118,9 @@ int main(int argc, char *argv[]) {
     if(MPI_OMP) {
         for (int i = 0; i <= 2000; i = i + 50) {
             fprintf(fp, "%d ", i);
-            //initialize clock
-            clock_t start, end, SIMDStart, SIMDEnd, OMPStart, OMPEnd;
-            int totalTime = 0;
+            
+            //initialize timespec
+            struct timespec tpe, tps;
 
             //allocate memory for target matrix calculation
             double *a = malloc(i * i * sizeof(double));
@@ -133,15 +132,16 @@ int main(int argc, char *argv[]) {
             double *c_calc = malloc(i * i * sizeof(double));
 
             //time matrix multiplication
-            start = clock();
-            //mmult_mpi_omp(c_calc, a, i, i, b, i, i);
-            end = clock();
-            totalTime = (int)(end - start);
-            fprintf(fp, "%d\n", totalTime);
+            clock_gettime(CLOCK_REALTIME, &tps);
+            //mmult_omp_mpi(c_calc, a, i, i, b, i, i);
+            clock_gettime(CLOCK_REALTIME, &tpe);
+            fprintf(fp, "%f\n", deltaTime(&tps, &tpe));
 
             free(a);
             free(b);
             free(c_calc);
         }
     }
+
+    printf("gnuplot data file complete\n");
 }

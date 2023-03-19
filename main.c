@@ -1,6 +1,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <omp.h>
 #include <string.h>
 #include <stdbool.h>
 
@@ -13,72 +14,65 @@
 
 int main(int argc, char *argv[]) {
 
-    int matrixSize = 0;
+    //test which approaches
     bool unoptimized = false;
     bool SIMD = true;
-    bool OMP = false;
+    bool OMP = true;
     bool MPI_OMP = false;
-    
-    int i = 0;
-    for (i; i <= 2000; i = i + 50) {
 
-        matrixSize = i;
-        printf("Matrix size: %d\n", matrixSize);
+    for (int i = 50; i <= 2000; i = i + 50) {
+
+        printf("Matrix size: %d\n", i);
 
         //initialize clock
-        clock_t start, end, SIMDStart, SIMDEnd, OMPStart, OMPEnd;
-        int totalTime = 0;
+        struct timespec tpe, tps;
 
         //allocate memory for target matrix calculation
-        double *a = malloc(matrixSize * matrixSize * sizeof(double));
-        double *b = malloc(matrixSize * matrixSize * sizeof(double));
+        double *a = malloc(i * i * sizeof(double));
+        double *b = malloc(i * i * sizeof(double));
 
         //generate matrices
-        a = gen_matrix(matrixSize, matrixSize);
-        b = gen_matrix(matrixSize, matrixSize);
-        double *c_calc = malloc(matrixSize * matrixSize * sizeof(double));
+        a = gen_matrix(i, i);
+        b = gen_matrix(i, i);
+        double *c_calc = malloc(i * i * sizeof(double));
 
         //Time Unoptimized
         if(unoptimized) {
-            start = clock();
-            mmult(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
-            end = clock();
-            totalTime = (int)(end - start);
-            printf("Total time for mmult: %d\n", totalTime);
+            clock_gettime(CLOCK_REALTIME, &tps);
+            mmult(c_calc, a, i, i, b, i, i);
+            clock_gettime(CLOCK_REALTIME, &tpe);
+            printf("unoptimized delta: %f\n", deltaTime(&tps, &tpe));
         }
 
         //Time SIMD
         if(SIMD) {
-            SIMDStart = clock();
-            mmult_simd(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
-            SIMDEnd = clock();
-            int SIMDTotalTime = (int)(SIMDEnd - SIMDStart);
-            printf("Total time for mmult_simd: %d\n", SIMDTotalTime);
+            clock_gettime(CLOCK_REALTIME, &tps);
+            mmult_simd(c_calc, a, i, i, b, i, i);
+            clock_gettime(CLOCK_REALTIME, &tpe);
+            printf("SIMD        delta: %f\n", deltaTime(&tps, &tpe));
         }
 
         //Time OMP
         if(OMP) {
-            OMPStart = clock();
-            mmult_omp(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
-            OMPEnd = clock();
-            int OMPTotalTime = (int)(OMPEnd - OMPStart);
-            printf("Total time for mmult_omp: %d\n", OMPTotalTime);
+            clock_gettime(CLOCK_REALTIME, &tps);
+            mmult_omp(c_calc, a, i, i, b, i, i);
+            clock_gettime(CLOCK_REALTIME, &tpe);
+            printf("OMP         delta: %f\n", deltaTime(&tps, &tpe));
         }
 
         //Time MPI OMP
         if(MPI_OMP) {
-            start = clock();
-            //mmult_mpi_omp(c_calc, a, matrixSize, matrixSize, b, matrixSize, matrixSize);
-            end = clock();
-            int MPI_OMPTotalTime = (double)(end - start);
-            printf("Total time for mmult_simd: %d\n", MPI_OMPTotalTime);
+            clock_gettime(CLOCK_REALTIME, &tps);
+            //mmult_omp_mpi(c_calc, a, i, i, b, i, i);
+            clock_gettime(CLOCK_REALTIME, &tpe);
+            printf("OMP MPI      delta: %f\n", deltaTime(&tps, &tpe));
         }
 
         // compare each matrix without timer
-        //compare_matrices(c_actual, mmultTarget, matrixSize, matrixSize);
-        //compare_matrices(c_actual, mmult_simdTarget, matrixSize, matrixSize);
-        //compare_matrices(*c_actual, mmult_ompTarget, matrixSize, matrixSize);
-        //compare_matrices(*c_actual, mmult_mpi_ompTarget, matrixSize, matrixSize); 
+        //compare_matrices(c_actual, mmultTarget, i, i);
+        //compare_matrices(c_actual, mmult_simdTarget, i, i);
+        //compare_matrices(*c_actual, mmult_ompTarget, i, i);
+        //compare_matrices(*c_actual, mmult_mpi_ompTarget, i, i); 
 
         //free all memory
         free(a);
