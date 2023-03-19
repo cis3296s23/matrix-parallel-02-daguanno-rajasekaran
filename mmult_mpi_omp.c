@@ -42,15 +42,15 @@ int main(int argc, char* argv[])
             /* Insert your controller code here to store the product into cc1 */
 
             int i, j, k;
-            #pragma omp parallel default(none) shared(a, b, c, aRows, aCols, bRows, bCols) private(i, k, j)
+            #pragma omp parallel default(none) shared(aa, bb, cc1, nrows, ncols, nrows, ncols) private(i, k, j)
             #pragma omp for
-            for (i = 0; i < aRows; i++) {
-                for (j = 0; j < bCols; j++) {
-                    cc1[i*bCols + j] = 0;
+            for (i = 0; i < nrows; i++) {
+                for (j = 0; j < ncols; j++) {
+                    cc1[i*ncols + j] = 0;
                 }
-                for (k = 0; k < aCols; k++) {
-                    for (j = 0; j < bCols; j++) {
-                        cc1[i*bCols + j] += aa[i*aCols + k] * bb[k*bCols + j];
+                for (k = 0; k < ncols; k++) {
+                    for (j = 0; j < ncols; j++) {
+                        cc1[i*ncols + j] += aa[i*ncols + k] * bb[k*ncols + j];
                     }
                 }
             }      
