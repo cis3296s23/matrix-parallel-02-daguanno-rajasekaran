@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
             /* Insert your controller code here to store the product into cc1 */
 
             int i, j, k;
-            #pragma omp parallel default(none) shared(aa, bb, cc1, nrows, ncols, nrows, ncols) private(i, k, j)
+            #pragma omp parallel default(none) shared(aa, bb, cc1, nrows, ncols) private(i, k, j)
             #pragma omp for
             for (i = 0; i < nrows; i++) {
                 for (j = 0; j < ncols; j++) {
