@@ -15,7 +15,6 @@
 
 int main(int argc, char* argv[])
 {
-    printf("before everything");
     int nrows, ncols;
     double *aa;	/* the A matrix */
     double *bb;	/* the B matrix */
@@ -32,8 +31,6 @@ int main(int argc, char* argv[])
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
-
-    printf("before boys");
 
     if (argc > 1) {
         //get and set number of rows and columns
