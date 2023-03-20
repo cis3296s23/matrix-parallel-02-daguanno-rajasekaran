@@ -25,43 +25,104 @@ int main(int argc, char* argv[])
     MPI_Status status;
 
     /* insert other global variables here */
+    int stripesize;
+    double *a, *buffer;
 
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     if (argc > 1) {
+        //get and set number of rows and columns
         nrows = atoi(argv[1]);
         ncols = nrows;
         printf("%d", ncols);
+
+        //malloc for buffer, a, and b
+        buffer = (double*)malloc(sizeof(double) * ncols);
+        a = (double*)malloc(sizeof(double) * ncols);
         
-        if (myid == 0) {
-            // Controller Code goes here
+        if (myid == 0) {// Controller Code goes here
+            //generate matrices to multiply together
             aa = gen_matrix(nrows, ncols);
             bb = gen_matrix(ncols, nrows);
-            cc1 = malloc(sizeof(double) * nrows * nrows); 
+
+            //malloc for cc1(answer matrix)
+            cc1 = malloc(sizeof(double) * nrows * nrows);
+
+            //initialize for loop iterators
+            int i, j, k, l;
+
+            //start mpi timing
             starttime = MPI_Wtime();
             /* Insert your controller code here to store the product into cc1 */
+            
+            //set stripesize to number of slaves
+            stripesize = ncols/4;
 
-            int i, j, k;
+            //broadcast bb (the matrix that each stripe is getting multiplied by)
+            MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+            //for loop to send each stripe to a slave
+            for(k = 0; k < 4; k++) {
+                for (i = 0; i < stripesize; i++) {
+                    for (j = 0; j < ncols; j++) {
+                        buffer[j] = aa[i * ncols + j];
+                    }  
+                    MPI_Send(buffer, ncols, MPI_DOUBLE, i+1, k, MPI_COMM_WORLD);
+                }
+            }
+
+            //receive stripes
+            for(l = 0; l < 4; l++) {
+                MPI_Recv(buffer, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+                    MPI_COMM_WORLD, &status);
+                
+                //get the stripe number
+                int stripe = status.MPI_TAG;
+
+                //insert the stripe into the answer matrix cc1
+                for(i = 0; i < nrows; i++) {
+                    for(j = 0; j < ncols; j++) {
+                        buffer[j] = cc1[i * ncols + j];
+                    }
+                }
+            }
+            
+            //end MPI timing
+            endtime = MPI_Wtime();
+            printf("%f\n",(endtime - starttime));
+
+            //compare matrices with normal mmult
+            //cc2  = malloc(sizeof(double) * nrows * nrows);
+            //mmult(cc2, aa, nrows, ncols, bb, ncols, nrows);
+            //compare_matrices(cc2, cc1, nrows, nrows);
+        } else { // Worker code goes here
+            
+            //broadcast some shit matrix bb (the matrix that each stripe is getting multiplied by)
+            MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            
+            //recieve buffer
+            MPI_Recv(buffer, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+                    MPI_COMM_WORLD, &status);
+            int stripe = status.MPI_TAG;
+
+            //omp matrix mult of buffer(stripe) and bb to a
+            int i, j, k = 0;
             #pragma omp parallel default(none) shared(aa, bb, cc1, nrows, ncols) private(i, k, j)
             #pragma omp for
             for (i = 0; i < nrows; i++) {
                 for (j = 0; j < ncols; j++) {
-                    cc1[i*ncols + j] = 0;
+                    a[i*ncols + j] = 0;
                 }
                 for (k = 0; k < ncols; k++) {
                     for (j = 0; j < ncols; j++) {
-                        cc1[i*ncols + j] += aa[i*ncols + k] * bb[k*ncols + j];
+                        a[i*ncols + j] += buffer[i*ncols + k] * bb[k*ncols + j];
                     }
                 }
-            }      
-            endtime = MPI_Wtime();
-            printf("%f\n",(endtime - starttime));
-            //cc2  = malloc(sizeof(double) * nrows * nrows);
-            //mmult(cc2, aa, nrows, ncols, bb, ncols, nrows);
-            //compare_matrices(cc2, cc1, nrows, nrows);
-        } else {
-            // Worder code goes here
+            }
+            
+            //send stripe back to controller
+            MPI_Send(a, 1, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
         }
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
