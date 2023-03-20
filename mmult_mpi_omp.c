@@ -38,6 +38,9 @@ int main(int argc, char* argv[])
         ncols = nrows;
         printf("matrix size: %d\n", ncols);
 
+        //set stripesize to number of slaves
+        stripesize = ncols/4;
+
         //malloc for buffer, a, and b
         buffer = (double*)malloc(sizeof(double) * nrows * ncols);
         a = (double*)malloc(sizeof(double) * nrows * ncols);
@@ -60,8 +63,7 @@ int main(int argc, char* argv[])
             starttime = MPI_Wtime();
             /* Insert your controller code here to store the product into cc1 */
             
-            //set stripesize to number of slaves
-            stripesize = ncols/4;
+            
 
             printf("controller broadcast\n");
             //broadcast bb (the matrix that each stripe is getting multiplied by)
