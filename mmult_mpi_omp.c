@@ -92,8 +92,6 @@ int main(int argc, char* argv[])
                 //get the stripe number
                 int stripe = status.MPI_TAG;
 
-                print_matrix(cc1, nrows, ncols);
-
                 //insert the stripe into the answer matrix cc1
                 for(i = 0; i < nrows; i++) {
                     for(j = 0; j < ncols; j++) {
@@ -101,6 +99,8 @@ int main(int argc, char* argv[])
                     }
                 }
             }
+
+            print_matrix(cc1, nrows, ncols);
             
             printf("mpi timing\n");
             //end MPI timing
@@ -142,6 +142,10 @@ int main(int argc, char* argv[])
                     }
                 }
             }
+
+            printf("print matrix from worker %d\n", stripe);
+            print_matrix(a, nrows, ncols);
+            printf("\n");
             
             //send stripe back to controller
             MPI_Send(a, 1, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
