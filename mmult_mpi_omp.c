@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
         stripesize = ncols/4;
 
         //malloc for buffer, a, and b
-        buffer = (double*)malloc(sizeof(double) * nrows * ncols);
+        buffer = (double*)malloc(sizeof(double) * stripesize * ncols);
         a = (double*)malloc(sizeof(double) * nrows * ncols);
         aa = (double*)malloc(sizeof(double) * nrows * ncols);
         bb = (double*)malloc(sizeof(double) * nrows * ncols);
@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
                     }
                     //printf(": %d", stripesize);
                 }
-                printf("buffer %d", k);
+                printf("buffer %d\n", k);
                 print_matrix(buffer, nrows, ncols);
                 MPI_Send(buffer, sizeof(double) * stripesize * ncols, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
             }
