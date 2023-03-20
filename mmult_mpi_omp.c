@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
         bb = (double*)malloc(sizeof(double) * nrows * ncols);
 
         if (myid == 0) {// Controller Code goes here
-            printf("generate matrices");
+            printf("generate matrices\n");
             //generate matrices to multiply together
             aa = gen_matrix(nrows, ncols);
             bb = gen_matrix(ncols, nrows);
@@ -63,13 +63,13 @@ int main(int argc, char* argv[])
             //set stripesize to number of slaves
             stripesize = ncols/4;
 
-            printf("controller broadcast");
+            printf("controller broadcast\n");
             //broadcast bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             //for loop to send each stripe to a slave
             for(k = 0; k < 4; k++) {
-            printf("earn your stripes");
+            printf("earn your stripes\n");
 
                 for (i = 0; i < stripesize; i++) {
                     for (j = 0; j < ncols; j++) {
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 
             //receive stripes
             for(l = 0; l < 4; l++) {
-            printf("receive stripes");
+            printf("receive stripes\n");
 
                 MPI_Recv(buffer, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
             //compare_matrices(cc2, cc1, nrows, nrows);
         } else { // Worker code goes here
 
-            printf("im worker %d", status.MPI_TAG);
+            printf("im worker %d\n", status.MPI_TAG);
             
             //malloc buffer, a, and  for slaves
             buffer = (double*)malloc(sizeof(double) * nrows * ncols);
