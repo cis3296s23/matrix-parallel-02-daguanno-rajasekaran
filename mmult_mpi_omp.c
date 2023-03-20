@@ -130,7 +130,8 @@ int main(int argc, char* argv[])
                         break;
                     }
 
-                    printf("im worker %d\n", status.MPI_TAG);
+                    int stripe = status.MPI_TAG;
+                    printf("stripe %d\n", stripe);
 
                     //omp matrix mult of buffer(stripe) and bb to a
                     int i, j, k = 0;
