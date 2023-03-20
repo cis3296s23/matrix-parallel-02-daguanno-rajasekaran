@@ -15,6 +15,7 @@
 
 int main(int argc, char* argv[])
 {
+    printf("before everything");
     int nrows, ncols;
     double *aa;	/* the A matrix */
     double *bb;	/* the B matrix */
