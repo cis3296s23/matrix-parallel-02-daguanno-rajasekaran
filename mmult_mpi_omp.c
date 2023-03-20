@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             //for loop to send each stripe to a slave
-            for(k = 0; k <= 3; k++) {
+            for(k = 0; k < 3; k++) {
             printf("earn your stripes\n");
 
                 for (i = 0; i < stripesize; i++) {
@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
                     }  
                     printf("stripesize: %d", stripesize);
                     //printf(": %d", stripesize);
-                    MPI_Send(buffer, stripesize * ncols, MPI_DOUBLE, k, k, MPI_COMM_WORLD);
+                    MPI_Send(buffer, stripesize * ncols, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
                 }
             }
 
