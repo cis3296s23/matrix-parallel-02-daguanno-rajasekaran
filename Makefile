@@ -50,6 +50,18 @@ test_mmult_simd_o3: test_mmult_simd.c mmult_simd.c mat.c
 run_test_mmult_simd_o3: test_mmult_simd
 	./test_mmult_simd
 
+gnu: gen_gnu.c mat.c mmult_simd.c mmult.c mmult_omp.c mmult_mpi_omp.c
+	gcc -c -O3 -fopenmp gen_gnu.c 
+
+run_gnu: gen_gnu
+	./gen_gnu
+
+MPI_OMP_LOOP:
+	number=50 ; while [[ $$number -le 4000 ]] ; do \
+        mpiexec -f ~/hosts -n 4 ./mmult_mpi_omp number \
+        ((number = number + 50)) ; \
+    done
+
 clean:
 	rm -f *.o
 	rm -f ${PGMS}

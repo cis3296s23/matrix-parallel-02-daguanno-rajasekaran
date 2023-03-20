@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
     if (argc > 1) {
         nrows = atoi(argv[1]);
         ncols = nrows;
-        printf("size: %d", ncols);
+        printf("%d", ncols);
         
         if (myid == 0) {
             // Controller Code goes here
@@ -57,9 +57,9 @@ int main(int argc, char* argv[])
             }      
             endtime = MPI_Wtime();
             printf("%f\n",(endtime - starttime));
-            cc2  = malloc(sizeof(double) * nrows * nrows);
-            mmult(cc2, aa, nrows, ncols, bb, ncols, nrows);
-            compare_matrices(cc2, cc1, nrows, nrows);
+            //cc2  = malloc(sizeof(double) * nrows * nrows);
+            //mmult(cc2, aa, nrows, ncols, bb, ncols, nrows);
+            //compare_matrices(cc2, cc1, nrows, nrows);
         } else {
             // Worder code goes here
         }
