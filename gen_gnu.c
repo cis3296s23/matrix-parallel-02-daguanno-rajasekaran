@@ -16,9 +16,9 @@ int main(int argc, char *argv[]) {
 
     //test which approaches
     bool unoptimized = false;
-    bool SIMD = true;
-    bool OMP = true;
-    bool MPI_OMP = false;
+    bool SIMD = false;
+    bool OMP = false;
+    bool MPI_OMP = true;
 
     printf("generating gnuplot data file . . .\n");
 
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
 
             //time matrix multiplication
             clock_gettime(CLOCK_REALTIME, &tps);
-            //mmult_omp_mpi(c_calc, a, i, i, b, i, i);
+            mmult_omp_mpi(c_calc, a, i, i, b, i, i);
             clock_gettime(CLOCK_REALTIME, &tpe);
             fprintf(fp, "%f\n", deltaTime(&tps, &tpe));
 
