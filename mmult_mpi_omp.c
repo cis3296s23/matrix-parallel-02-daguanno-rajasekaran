@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
         //get and set number of rows and columns
         nrows = atoi(argv[1]);
         ncols = nrows;
-        printf("%d", ncols);
+        printf("matrix size: %d\n", ncols);
 
         //malloc for buffer, a, and b
         buffer = (double*)malloc(sizeof(double) * nrows * ncols);
@@ -75,6 +75,8 @@ int main(int argc, char* argv[])
                     for (j = 0; j < ncols; j++) {
                         buffer[j] = aa[i * ncols + j];
                     }  
+                    printf("stripesize: %d", stripesize);
+                    //printf(": %d", stripesize);
                     MPI_Send(buffer, stripesize * ncols, MPI_DOUBLE, i+1, k, MPI_COMM_WORLD);
                 }
             }
