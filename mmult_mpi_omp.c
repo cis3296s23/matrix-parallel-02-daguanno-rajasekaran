@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
         stripesize = ncols/4;
 
         //malloc for buffer, a, and b
-        buffer = (double*)malloc(sizeof(double) * stripesize * ncols);
+        buffer = (double*)malloc(sizeof(double) * stripesize);
         a = (double*)malloc(sizeof(double) * nrows * ncols);
         aa = (double*)malloc(sizeof(double) * nrows * ncols);
         bb = (double*)malloc(sizeof(double) * nrows * ncols);
@@ -81,14 +81,14 @@ int main(int argc, char* argv[])
                 }
                 printf("buffer %d\n", k);
                 print_matrix(buffer, nrows, ncols);
-                MPI_Send(buffer, stripesize * ncols, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
+                MPI_Send(buffer, stripesize, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
             }
 
             //receive stripes
             for(l = 0; l < 3; l++) {
             printf("receive stripes\n");
 
-                MPI_Recv(buffer, stripesize * ncols, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+                MPI_Recv(buffer, stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
                 
                 //get the stripe number
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
             printf("im worker %d\n", status.MPI_TAG);
             
             //malloc buffer, a, and  for slaves
-            buffer = (double*)malloc(sizeof(double) * stripesize * ncols);
+            buffer = (double*)malloc(sizeof(double) * stripesize);
             a = (double*)malloc(sizeof(double) * nrows * ncols);
 
             //broadcast matrix bb (the matrix that each stripe is getting multiplied by)
