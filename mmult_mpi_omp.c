@@ -77,10 +77,9 @@ int main(int argc, char* argv[])
                     for (j = 0; j < ncols; j++) {
                         buffer[j] = aa[i * ncols + j];
                     }
-                    print_matrix(buffer, nrows, ncols);
                     //printf(": %d", stripesize);
-                    MPI_Send(buffer, stripesize * ncols, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
                 }
+                MPI_Send(buffer, stripesize * ncols, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
             }
 
             //receive stripes
