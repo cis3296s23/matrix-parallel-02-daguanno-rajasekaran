@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
                     }  
                     printf("stripesize: %d", stripesize);
                     //printf(": %d", stripesize);
-                    MPI_Send(buffer, stripesize * ncols, MPI_DOUBLE, i, k, MPI_COMM_WORLD);
+                    MPI_Send(buffer, stripesize * ncols, MPI_DOUBLE, i+1, k, MPI_COMM_WORLD);
                 }
             }
 
