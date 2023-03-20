@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
                 }
                 printf("buffer %d\n", k);
                 print_matrix(buffer, nrows, ncols);
-                MPI_Send(buffer, sizeof(double) * stripesize * ncols, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
+                MPI_Send(buffer, stripesize * ncols, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
             }
 
             //receive stripes
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
             printf("im worker %d\n", status.MPI_TAG);
             
             //malloc buffer, a, and  for slaves
-            buffer = (double*)malloc(sizeof(double) * nrows * ncols);
+            buffer = (double*)malloc(sizeof(double) * stripesize * ncols);
             a = (double*)malloc(sizeof(double) * nrows * ncols);
 
             //broadcast matrix bb (the matrix that each stripe is getting multiplied by)
