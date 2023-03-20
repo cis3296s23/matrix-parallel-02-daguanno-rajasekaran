@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
             numsent = 0;
             MPI_Bcast(b, ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
             for (i = 0; i < min(numprocs-1, nrows); i++) {
-	            for (j = 0; j < ncols; j++) {
+                for (j = 0; j < ncols; j++) {
                     buffer[j] = aa[i * ncols + j];
                 }  
                 MPI_Send(buffer, ncols, MPI_DOUBLE, i+1, i+1, MPI_COMM_WORLD);
@@ -95,6 +95,7 @@ int main(int argc, char* argv[])
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
     }
+    print_matrix(c);
     MPI_Finalize();
     return 0;
 }
