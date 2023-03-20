@@ -100,6 +100,7 @@ int main(int argc, char* argv[])
                 }
             }
             
+            printf("mpi timing\n");
             //end MPI timing
             endtime = MPI_Wtime();
             printf("%f\n",(endtime - starttime));
