@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
                 }
                 printf("buffer %d", k);
                 print_matrix(buffer, nrows, ncols);
-                MPI_Send(buffer, stripesize * ncols, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
+                MPI_Send(buffer, sizeof(double) * stripesize * ncols, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
             }
 
             //receive stripes
