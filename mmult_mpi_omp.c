@@ -38,9 +38,12 @@ int main(int argc, char* argv[])
         printf("%d", ncols);
 
         //malloc for buffer, a, and b
-        buffer = (double*)malloc(sizeof(double) * ncols);
-        a = (double*)malloc(sizeof(double) * ncols);
-        
+        buffer = (double*)malloc(sizeof(double) * nrows * ncols);
+        a = (double*)malloc(sizeof(double) * nrows * ncols);
+        aa = (double*)malloc(sizeof(double) * nrows * ncols);
+        bb = (double*)malloc(sizeof(double) * nrows * ncols);
+        cc1 = (double*)malloc(sizeof(double) * nrows * ncols);
+
         if (myid == 0) {// Controller Code goes here
             //generate matrices to multiply together
             aa = gen_matrix(nrows, ncols);
