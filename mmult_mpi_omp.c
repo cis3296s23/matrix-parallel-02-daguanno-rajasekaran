@@ -76,8 +76,7 @@ int main(int argc, char* argv[])
                 for (i = 0; i < stripesize; i++) {
                     for (j = 0; j < ncols; j++) {
                         buffer[j] = aa[i * ncols + j];
-                    }  
-                    printf("stripesize: %d", stripesize);
+                    }
                     //printf(": %d", stripesize);
                     MPI_Send(buffer, stripesize * ncols, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
                 }
@@ -159,6 +158,7 @@ int main(int argc, char* argv[])
             MPI_Recv(buffer, stripesize * ncols, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
             int stripe = status.MPI_TAG;
+            printf("stripe %d\n", stripe);
 
             //omp matrix mult of buffer(stripe) and bb to a
             int i, j, k = 0;
