@@ -34,18 +34,18 @@ int main(int argc, char* argv[])
     if (argc > 1) {
         nrows = atoi(argv[1]);
         ncols = nrows;
-        // aa = (double*)malloc(sizeof(double) * nrows * ncols);
+        //aa = (double*)malloc(sizeof(double) * nrows * ncols);
         b = (double*)malloc(sizeof(double) * ncols);
         c = (double*)malloc(sizeof(double) * nrows);
         buffer = (double*)malloc(sizeof(double) * ncols);
 
         if (myid == 0) {
             // Controller code goes here
-            aa = gen_matrix(nrows, ncols);
+            aa = gen_matrix(nrows, ncols);  
             starttime = MPI_Wtime();
             numsent = 0;
             MPI_Bcast(b, ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-            for (i = 0; i < min(numprocs-1, nrows); i++) {
+            for (i = 0; i < min(numprocs-1, nrows); i++) { //sends out buffers to slaves with all columns of matrix aa
                 for (j = 0; j < ncols; j++) {
                     buffer[j] = aa[i * ncols + j];
                 }  
@@ -55,11 +55,14 @@ int main(int argc, char* argv[])
             for (i = 0; i < nrows; i++) {
                 MPI_Recv(&ans, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
+                for (j = 0; j < nrows; j++) {
+                        times[j] = ans[status.MPI_TAG + j];
+                    } 
                 sender = status.MPI_SOURCE;
                 anstype = status.MPI_TAG;
                 c[anstype-1] = ans;
                 if (numsent < nrows) {
-                    for (j = 0; j < ncols; j++) {
+                    for (j = 0; j < ncols; j++) {//if number of sent rows is less than total rows, send more columns to sender
                         buffer[j] = aa[numsent*ncols + j];
                     }  
                     MPI_Send(buffer, ncols, MPI_DOUBLE, sender, numsent+1, 
@@ -95,7 +98,8 @@ int main(int argc, char* argv[])
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
     }
-    print_matrix(c);
+    compare_matrices(times, aa, nrows, ncols);
+    print_matrix(times);
     MPI_Finalize();
     return 0;
 }
