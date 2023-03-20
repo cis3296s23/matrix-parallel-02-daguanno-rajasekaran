@@ -120,6 +120,7 @@ int main(int argc, char* argv[])
             //broadcast matrix bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
             
+            /*
             if (myid <= 3) {
                 while(1) {
 
@@ -152,29 +153,30 @@ int main(int argc, char* argv[])
                     MPI_Send(a, 1, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
                 }
             }
+            */
 
-            // //recieve buffer
-            // MPI_Recv(buffer, stripesize * ncols, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
-            //         MPI_COMM_WORLD, &status);
-            // int stripe = status.MPI_TAG;
+            //recieve buffer
+            MPI_Recv(buffer, stripesize * ncols, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+                    MPI_COMM_WORLD, &status);
+            int stripe = status.MPI_TAG;
 
-            // //omp matrix mult of buffer(stripe) and bb to a
-            // int i, j, k = 0;
-            // #pragma omp parallel default(none) shared(a, bb, buffer, nrows, ncols) private(i, k, j)
-            // #pragma omp for
-            // for (i = 0; i < nrows; i++) {
-            //     for (j = 0; j < ncols; j++) {
-            //         a[i*ncols + j] = 0;
-            //     }
-            //     for (k = 0; k < ncols; k++) {
-            //         for (j = 0; j < ncols; j++) {
-            //             a[i*ncols + j] += buffer[i*ncols + k] * bb[k*ncols + j];
-            //         }
-            //     }
-            // }
+            //omp matrix mult of buffer(stripe) and bb to a
+            int i, j, k = 0;
+            #pragma omp parallel default(none) shared(a, bb, buffer, nrows, ncols) private(i, k, j)
+            #pragma omp for
+            for (i = 0; i < nrows; i++) {
+                for (j = 0; j < ncols; j++) {
+                    a[i*ncols + j] = 0;
+                }
+                for (k = 0; k < ncols; k++) {
+                    for (j = 0; j < ncols; j++) {
+                        a[i*ncols + j] += buffer[i*ncols + k] * bb[k*ncols + j];
+                    }
+                }
+            }
             
-            // //send stripe back to controller
-            // MPI_Send(a, 1, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
+            //send stripe back to controller
+            MPI_Send(a, 1, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
         }
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
