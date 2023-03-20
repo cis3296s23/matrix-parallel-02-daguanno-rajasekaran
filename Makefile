@@ -57,16 +57,16 @@ gnu: gen_gnu.c mat.c mmult_simd.c mmult.c mmult_omp.c mmult_mpi_omp.c
 run_gnu: gen_gnu
 	./gen_gnu
 
-n?=50
-MPI_OMP_LOOP: mmult_mpi_omp.c mat.c
-        n=$(n); \
-        while [ $${n} -gt 0 ] ; do \
-            echo $$n ; \
-            n=`expr $$n - 1`; \
-        done; \
-        true
-	$(foreach var,$(number), mpiexec -f ~/hosts -n 4 ./mmult_mpi_omp $$number) \
-    number = number + 50
+# n?=50
+# MPI_OMP_LOOP: mmult_mpi_omp.c mat.c
+#         n=$(n); \
+#         while [ $${n} -gt 0 ] ; do \
+#             echo $$n ; \
+#             n=`expr $$n - 1`; \
+#         done; \
+#         true
+# 	$(foreach var,$(number), mpiexec -f ~/hosts -n 4 ./mmult_mpi_omp $$number) \
+#     number = number + 50
 
 clean:
 	rm -f *.o

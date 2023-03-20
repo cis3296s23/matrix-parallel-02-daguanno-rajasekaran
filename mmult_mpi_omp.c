@@ -32,6 +32,9 @@ int main(int argc, char* argv[])
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+
+    printf("before boys");
+
     if (argc > 1) {
         //get and set number of rows and columns
         nrows = atoi(argv[1]);
@@ -106,6 +109,8 @@ int main(int argc, char* argv[])
             //mmult(cc2, aa, nrows, ncols, bb, ncols, nrows);
             //compare_matrices(cc2, cc1, nrows, nrows);
         } else { // Worker code goes here
+
+            print("im worker %d", status.MPI_TAG)
             
             //malloc buffer, a, and  for slaves
             buffer = (double*)malloc(sizeof(double) * nrows * ncols);
