@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
             
             //recieve buffer
-            MPI_Recv(buffer, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+            MPI_Recv(buffer, 1, stripesize * ncols, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
             int stripe = status.MPI_TAG;
 
