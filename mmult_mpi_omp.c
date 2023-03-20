@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
             //compare_matrices(cc2, cc1, nrows, nrows);
         } else { // Worker code goes here
 
-            print("im worker %d", status.MPI_TAG)
+            printf("im worker %d", status.MPI_TAG);
             
             //malloc buffer, a, and  for slaves
             buffer = (double*)malloc(sizeof(double) * nrows * ncols);
