@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
     }
     compare_matrices(times, aa, nrows, ncols);
-    print_matrix(times);
+    print_matrix(times, nrows, ncols);
     MPI_Finalize();
     return 0;
 }
