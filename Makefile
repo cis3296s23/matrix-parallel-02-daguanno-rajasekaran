@@ -51,15 +51,22 @@ run_test_mmult_simd_o3: test_mmult_simd
 	./test_mmult_simd
 
 gnu: gen_gnu.c mat.c mmult_simd.c mmult.c mmult_omp.c mmult_mpi_omp.c
-	gcc -c -O3 -fopenmp gen_gnu.c 
+	mpicc -o gen_gnu -fopenmp -O3 mmult.c mmult_omp.c mmult_mpi_omp.c mat.c
+	mpiexec -f ~/hosts -n 4 ./mmult_mpi_omp 100
 
 run_gnu: gen_gnu
 	./gen_gnu
 
-number=50
-MPI_OMP_LOOP: mmult_mpi_omp.o mat.c
+n?=50
+MPI_OMP_LOOP: mmult_mpi_omp.c mat.c
+        n=$(n); \
+        while [ $${n} -gt 0 ] ; do \
+            echo $$n ; \
+            n=`expr $$n - 1`; \
+        done; \
+        true
 	$(foreach var,$(number), mpiexec -f ~/hosts -n 4 ./mmult_mpi_omp $$number) \
-    (number = number + 50)
+    number = number + 50
 
 clean:
 	rm -f *.o
