@@ -44,6 +44,7 @@ int main(int argc, char* argv[])
         bb = (double*)malloc(sizeof(double) * nrows * ncols);
 
         if (myid == 0) {// Controller Code goes here
+            printf("generate matrices");
             //generate matrices to multiply together
             aa = gen_matrix(nrows, ncols);
             bb = gen_matrix(ncols, nrows);
@@ -61,11 +62,14 @@ int main(int argc, char* argv[])
             //set stripesize to number of slaves
             stripesize = ncols/4;
 
+            printf("controller broadcast");
             //broadcast bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             //for loop to send each stripe to a slave
             for(k = 0; k < 4; k++) {
+            printf("earn your stripes");
+
                 for (i = 0; i < stripesize; i++) {
                     for (j = 0; j < ncols; j++) {
                         buffer[j] = aa[i * ncols + j];
@@ -76,6 +80,8 @@ int main(int argc, char* argv[])
 
             //receive stripes
             for(l = 0; l < 4; l++) {
+            printf("receive stripes");
+
                 MPI_Recv(buffer, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
                 
