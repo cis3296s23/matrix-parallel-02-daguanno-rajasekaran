@@ -55,14 +55,11 @@ int main(int argc, char* argv[])
             for (i = 0; i < nrows; i++) {
                 MPI_Recv(&ans, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
-                for (j = 0; j < nrows; j++) {
-                        times[j] = ans[status.MPI_TAG + j];
-                    } 
                 sender = status.MPI_SOURCE;
                 anstype = status.MPI_TAG;
                 c[anstype-1] = ans;
                 if (numsent < nrows) {
-                    for (j = 0; j < ncols; j++) {//if number of sent rows is less than total rows, send more columns to sender
+                    for (j = 0; j < ncols; j++) {//if number of sent rows is less than total rows, send more columns back to sender
                         buffer[j] = aa[numsent*ncols + j];
                     }  
                     MPI_Send(buffer, ncols, MPI_DOUBLE, sender, numsent+1, 
@@ -71,6 +68,9 @@ int main(int argc, char* argv[])
                 } else {
                     MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
                 }
+                for (j = 0; j < ncols; j++) {
+                        times[j] = c[status.MPI_TAG + j];
+                    } 
             } 
             endtime = MPI_Wtime();
             printf("%f\n",(endtime - starttime));
