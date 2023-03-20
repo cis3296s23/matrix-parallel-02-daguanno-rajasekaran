@@ -56,11 +56,10 @@ gnu: gen_gnu.c mat.c mmult_simd.c mmult.c mmult_omp.c mmult_mpi_omp.c
 run_gnu: gen_gnu
 	./gen_gnu
 
-MPI_OMP_LOOP:
-	number=50 ; while [[ $$number -le 4000 ]] ; do \
-        mpiexec -f ~/hosts -n 4 ./mmult_mpi_omp number \
-        ((number = number + 50)) ; \
-    done
+number=50
+MPI_OMP_LOOP: mmult_mpi_omp.o mat.c
+	$(foreach var,$(number), mpiexec -f ~/hosts -n 4 ./mmult_mpi_omp $$number) \
+    (number = number + 50)
 
 clean:
 	rm -f *.o
