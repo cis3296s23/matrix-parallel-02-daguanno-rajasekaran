@@ -42,7 +42,6 @@ int main(int argc, char* argv[])
         a = (double*)malloc(sizeof(double) * nrows * ncols);
         aa = (double*)malloc(sizeof(double) * nrows * ncols);
         bb = (double*)malloc(sizeof(double) * nrows * ncols);
-        cc1 = (double*)malloc(sizeof(double) * nrows * ncols);
 
         if (myid == 0) {// Controller Code goes here
             //generate matrices to multiply together
@@ -101,6 +100,10 @@ int main(int argc, char* argv[])
             //compare_matrices(cc2, cc1, nrows, nrows);
         } else { // Worker code goes here
             
+            //malloc buffer, a, and  for slaves
+            buffer = (double*)malloc(sizeof(double) * nrows * ncols);
+            a = (double*)malloc(sizeof(double) * nrows * ncols);
+
             //broadcast some shit matrix bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
             
