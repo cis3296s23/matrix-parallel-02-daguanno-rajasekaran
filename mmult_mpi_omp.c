@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 
                 for (i = 0; i < stripesize; i++) {
                     for (j = 0; j < ncols; j++) {
-                        buffer[i * ncols + j] = aa[k * ncols + j];
+                        buffer[i*ncols + j] = aa[i * ncols + j + k*ncols*stripesize];
                     }
                 }
                 printf("buffer %d\n", k);
