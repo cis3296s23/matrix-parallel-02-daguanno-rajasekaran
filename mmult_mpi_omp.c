@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
                     printf("stripesize: %d", stripesize);
                 }
                 printf("buffer %d\n", k);
-                print_matrix(buffer, stripesize, ncols);
+                print_matrix(buffer, ncols, stripesize);
                 MPI_Send(buffer, stripesize, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
                 free(buffer);
             }
