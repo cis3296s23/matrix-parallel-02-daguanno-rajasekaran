@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
         
 
         //set stripesize to number of slaves
-        stripesize = ncols/3;
+        stripesize = ncols/nrows;
 
         //malloc for buffer, a, and b
         buffer = (double*)malloc(ncols * stripesize);
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             //for loop to send each stripe to a slave
-            for(k = 0; k < 3; k++) {
+            for(k = 0; k < ncols; k++) {
             printf("earn your stripes\n");
 
                 for (i = 0; i < stripesize; i++) {
@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
 
             //receive stripes
 
-            for (i = 0; i < 3; i++) {
+            for (i = 0; i < ncols; i++) {
                 MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                 MPI_COMM_WORLD, &status);
             
