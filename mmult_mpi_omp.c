@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
         //get and set number of rows and columns
         nrows = atoi(argv[1]);
         ncols = nrows;
-        printf("matrix size: %d\n", ncols);
+        
 
         //set stripesize to number of slaves
         stripesize = ncols/3;
@@ -49,6 +49,7 @@ int main(int argc, char* argv[])
         bb = (double*)malloc(sizeof(double) * nrows * ncols);
 
         if (myid == 0) {// Controller Code goes here
+            printf("matrix size: %d\n", ncols);
             printf("generate matrices\n");
             //generate matrices to multiply together
             aa = gen_matrix(nrows, ncols);
@@ -73,7 +74,7 @@ int main(int argc, char* argv[])
 
                 for (i = 0; i < stripesize; i++) {
                     for (j = 0; j < ncols; j++) {
-                        buffer[k * stripesize + j] = aa[k * stripesize + j];
+                        buffer[i * ncols + j] = aa[k * ncols + j];
                     }
                 }
                 printf("buffer %d\n", k);
