@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
         printf("matrix size: %d\n", ncols);
 
         //set stripesize to number of slaves
-        stripesize = ncols/4;
+        stripesize = ncols/3;
 
         //malloc for buffer, a, and b
         buffer = (double*)malloc(ncols * stripesize);
@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
             MPI_Send(a, ncols * stripesize, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
 
             printf("print matrix from worker %d\n", stripe);
-            print_matrix(a, nrows, stripesize); 
+            print_matrix(a, nrows, stripesize);
             printf("worker %d done!\n", stripe);
         }
     } else {
