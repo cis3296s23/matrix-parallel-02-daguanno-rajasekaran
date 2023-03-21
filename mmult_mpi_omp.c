@@ -77,7 +77,6 @@ int main(int argc, char* argv[])
                     for (j = 0; j < ncols; j++) {
                         buffer[i * ncols + j] = aa[i * ncols + j];
                     }
-                    printf("stripesize: %d", stripesize);
                 }
                 printf("buffer %d\n", k);
                 print_matrix(buffer, ncols, stripesize);
@@ -85,15 +84,17 @@ int main(int argc, char* argv[])
                 free(buffer);
             }
 
+            int numreceived
             //receive stripes
-            for(l = 0; l < 3; l++) {
             printf("receive stripes\n");
 
-                MPI_Recv(buffer, sizeof(double) * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+                while(1) {
+                    MPI_Recv(buffer, sizeof(double) * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
                 
                 //get the stripe number
                 int stripe = status.MPI_TAG;
+                numreceived++;
 
                 //insert the stripe into the answer matrix cc1
                 for(i = 0; i < nrows; i++) {
@@ -101,7 +102,22 @@ int main(int argc, char* argv[])
                         buffer[j] = cc1[i * ncols + j];
                     }
                 }
-            }
+                if(numreceived == 4) {
+                    break;
+                }
+                }
+                // MPI_Recv(buffer, sizeof(double) * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+                //     MPI_COMM_WORLD, &status);
+                
+                // //get the stripe number
+                // int stripe = status.MPI_TAG;
+
+                // //insert the stripe into the answer matrix cc1
+                // for(i = 0; i < nrows; i++) {
+                //     for(j = 0; j < ncols; j++) {
+                //         buffer[j] = cc1[i * ncols + j];
+                //     }
+                // }
 
             //print_matrix(cc1, nrows, ncols);
             
