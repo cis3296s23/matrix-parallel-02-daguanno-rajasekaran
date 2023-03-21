@@ -95,6 +95,9 @@ int main(int argc, char* argv[])
                     //get the stripe number
                     int stripe = status.MPI_TAG;
 
+                    printf("buffer in loop\n");
+                    print_matrix(buffer, ncols, stripesize);
+
                     //insert the stripe into the answer matrix cc1
                     for (i = 0; i < stripesize; i++) {
                         for (j = 0; j < ncols; j++) {
