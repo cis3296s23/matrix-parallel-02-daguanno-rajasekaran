@@ -39,8 +39,8 @@ int main(int argc, char* argv[])
         ncols = nrows;
         
 
-        //set stripesize to number of slaves
-        stripesize = ncols/nrows;
+        //set stripesize to number of workers
+        stripesize = ncols/3;
 
         //malloc for buffer, a, and b
         buffer = (double*)malloc(ncols * stripesize);
@@ -68,35 +68,42 @@ int main(int argc, char* argv[])
             //broadcast bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-            //for loop to send each stripe to a slave
-            for(k = 0; k < ncols; k++) {
+            //for loop to send each stripe to a worker
+            for(k = 0; k < 3; k++) {
             printf("earn your stripes\n");
 
                 for (i = 0; i < stripesize; i++) {
                     for (j = 0; j < ncols; j++) {
-                        buffer[i*ncols + j] = aa[i * ncols + j + k*ncols*stripesize];
+                        buffer[i*ncols + j] += aa[i * ncols + j + k*ncols*stripesize];
                     }
                 }
                 printf("buffer %d\n", k);
                 print_matrix(buffer, ncols, stripesize);
-                int dest = k%3;
-                printf("before send\n");
-                MPI_Send(buffer, ncols * stripesize, MPI_DOUBLE, 1, k, MPI_COMM_WORLD);
-                printf("after send\n");
+                MPI_Send(buffer, ncols * stripesize, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
                 numsent++;
             }
 
-            // while(numsent < ncols) {
-                
-            // }
+            while(numsent < ncols) {
+                int i, j, k = 0;
+            #pragma omp parallel default(none) shared(a, bb, buffer, stripesize, ncols) private(i, k, j,stripe)
+            #pragma omp for
+            for (i = 0; i < stripesize; i++) {
+                for (j = 0; j < ncols; j++) {
+                    cc1[i*ncols + j] = 0;
+                }
+                for (k = 0; k < stripesize; k++) {
+                    for (j = 0; j < ncols; j++) {
+                        cc1[k * ncols + j] += buffer[k * stripesize + k] * bb[stripe * k * ncols + j];
+                    }
+                }
+            }
+            }
 
             //receive stripes
 
-            for (i = 0; i < ncols; i++) {
+            for (i = 0; i < 3; i++) {
                 MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                 MPI_COMM_WORLD, &status);
-
-                int sender = status.MPI_SOURCE;
             
                 //get the stripe number
                 int stripe = status.MPI_TAG;
@@ -108,7 +115,7 @@ int main(int argc, char* argv[])
                 for (i = 0; i < stripesize * ncols; i++) {
                         cc1[stripe *ncols + i] = buffer[i];
                     }
-                MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
+                //MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
             }
                 // MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                 //     MPI_COMM_WORLD, &status);
@@ -136,7 +143,7 @@ int main(int argc, char* argv[])
             compare_matrices(cc2, cc1, nrows, nrows);
         } else { // Worker code goes here
             
-            //malloc buffer, a, and  for slaves
+            //malloc buffer, a, and  for workers
             //buffer = (double*)malloc(ncols * stripesize);
             a = (double*)malloc(sizeof(double) * ncols * stripesize);
 
