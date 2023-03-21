@@ -96,9 +96,9 @@ int main(int argc, char* argv[])
                     int stripe = status.MPI_TAG;
 
                     //insert the stripe into the answer matrix cc1
-                    for(i = 0; i < nrows; i++) {
-                        for(j = 0; j < ncols; j++) {
-                            buffer[j] = cc1[i * ncols + j];
+                    for (i = 0; i < stripesize; i++) {
+                        for (j = 0; j < ncols; j++) {
+                            buffer[i * ncols + j] = cc1[i * ncols + j];
                         }
                         numreceived++;
                     }
