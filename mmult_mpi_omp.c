@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
             MPI_Send(a, sizeof(double) * stripesize, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
 
             //free(buffer);
-            free(a);
+            //free(a);
         }
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
