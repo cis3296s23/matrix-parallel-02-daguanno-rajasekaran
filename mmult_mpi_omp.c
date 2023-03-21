@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
                 //     }
                 // }
 
-            //print_matrix(cc1, nrows, ncols);
+            print_matrix(cc1, nrows, ncols);
             
             printf("mpi timing\n");
             //end MPI timing
@@ -132,8 +132,6 @@ int main(int argc, char* argv[])
             mmult(cc2, aa, nrows, ncols, bb, ncols, nrows);
             compare_matrices(cc2, cc1, nrows, nrows);
         } else { // Worker code goes here
-
-            printf("im worker %d\n", status.MPI_TAG);
             
             //malloc buffer, a, and  for slaves
             //buffer = (double*)malloc(sizeof(double) * stripesize);
