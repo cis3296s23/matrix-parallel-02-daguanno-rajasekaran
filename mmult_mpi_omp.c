@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
                 MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                 MPI_COMM_WORLD, &status);
 
-                sender = status.MPI_SOURCE;
+                int sender = status.MPI_SOURCE;
             
                 //get the stripe number
                 int stripe = status.MPI_TAG;
