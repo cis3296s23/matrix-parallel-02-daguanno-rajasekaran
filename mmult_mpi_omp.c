@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
                         cc1[stripe *ncols + i] = buffer[i];
                     }
 
-                    printf("numsent: %d", numsent);
+                    
 
                 if (numsent < nrows) {
                     for (j = 0; j < ncols; j++) {
@@ -100,6 +100,7 @@ int main(int argc, char* argv[])
                     MPI_Send(buffer, ncols, MPI_DOUBLE, sender, numsent+1, 
                         MPI_COMM_WORLD);
                     numsent++;
+                    printf("numsent: %d\n", numsent);
                 } else {
                     MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
                 }
