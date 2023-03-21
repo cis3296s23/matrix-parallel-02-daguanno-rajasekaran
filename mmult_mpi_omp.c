@@ -165,9 +165,9 @@ int main(int argc, char* argv[])
                 }
             }
 
-            // printf("print matrix from worker %d\n", stripe);
-            // print_matrix(a, nrows, ncols);
-            // printf("\n");
+            printf("print matrix from worker %d\n", stripe);
+            print_matrix(a, nrows, ncols);
+            printf("\n");
             
             //send stripe back to controller
             MPI_Send(a, sizeof(double) * stripesize, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
