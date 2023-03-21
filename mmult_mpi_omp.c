@@ -95,6 +95,8 @@ int main(int argc, char* argv[])
             for (i = 0; i < ncols; i++) {
                 MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                 MPI_COMM_WORLD, &status);
+
+                sender = status.MPI_SOURCE;
             
                 //get the stripe number
                 int stripe = status.MPI_TAG;
@@ -106,7 +108,7 @@ int main(int argc, char* argv[])
                 for (i = 0; i < stripesize * ncols; i++) {
                         cc1[stripe *ncols + i] = buffer[i];
                     }
-                //MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
+                MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
             }
                 // MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                 //     MPI_COMM_WORLD, &status);
