@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
                     numreceived = numreceived / nrows;
 
 
-                    if(numreceived == 4) {
+                    if(numreceived == 3) {
                         break;
                     }
                 }
