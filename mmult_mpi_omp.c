@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
 
             //omp matrix mult of buffer(stripe) and bb to a
             int i, j, k = 0;
-            #pragma omp parallel default(none) shared(a, bb, buffer, stripesize, ncols) private(i, k, j)
+            #pragma omp parallel default(none) shared(a, bb, buffer, stripesize, ncols) private(i, k, j,stripe)
             #pragma omp for
             for (i = 0; i < stripesize; i++) {
                 for (j = 0; j < ncols; j++) {
