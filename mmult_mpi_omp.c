@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     MPI_Status status;
 
     /* insert other global variables here */
-    int stripesize;
+    int stripesize, stripe, sender;
     int numsent = 0;
     double *a, *buffer;
 
