@@ -83,9 +83,9 @@ int main(int argc, char* argv[])
                 numsent++;
             }
 
-            while(numsent < ncols) {
+            // while(numsent < ncols) {
                 
-            }
+            // }
 
             //receive stripes
 
