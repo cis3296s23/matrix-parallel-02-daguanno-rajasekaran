@@ -87,7 +87,8 @@ int main(int argc, char* argv[])
 
             int numreceived = 0;
             //receive stripes
-            printf("receive stripes\n");
+            printf("receive stripes %d\n", iter);
+
             if(iter == 3) {
                 for (i = 0; i < 3; i++) {
                     MPI_Recv(buffer, sizeof(double) * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
