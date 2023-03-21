@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
                         numreceived++;
                     }
 
-                    if(numreceived == 3*ncols) {
+                    if(numreceived == 3*stripesize) {
                         break;
                     }
                 }
