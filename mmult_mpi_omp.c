@@ -91,6 +91,8 @@ int main(int argc, char* argv[])
                         cc1[stripe *ncols + i] = buffer[i];
                     }
 
+                    printf("numsent: %d", numsent);
+
                 if (numsent < nrows) {
                     for (j = 0; j < ncols; j++) {
                         buffer[j] = aa[numsent*ncols + j];
