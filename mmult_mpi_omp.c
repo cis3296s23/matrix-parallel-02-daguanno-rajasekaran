@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
                 print_matrix(buffer, ncols, stripesize);
                 int dest = k%3;
                 printf("before send\n");
-                MPI_Send(buffer, ncols * stripesize, MPI_DOUBLE, dest, k, MPI_COMM_WORLD);
+                MPI_Send(buffer, ncols * stripesize, MPI_DOUBLE, 1, k, MPI_COMM_WORLD);
                 printf("after send\n");
                 numsent++;
             }
