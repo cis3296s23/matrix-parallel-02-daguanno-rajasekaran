@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
             int numreceived = 0;
             //receive stripes
             printf("receive stripes\n");
-
+            if(iter == 3) {
                 for (i = 0; i < 3; i++) {
                     MPI_Recv(buffer, sizeof(double) * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
                 //         buffer[j] = cc1[i * ncols + j];
                 //     }
                 // }
-
+            }
             print_matrix(cc1, nrows, ncols);
             
             printf("mpi timing\n");
