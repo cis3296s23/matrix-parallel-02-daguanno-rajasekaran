@@ -14,7 +14,7 @@
 #include "mat.h"
 
 int main(int argc, char* argv[]) {
-    
+
     int nrows, ncols;
     double *aa;	/* the A matrix */
     double *bb;	/* the B matrix */
@@ -154,7 +154,7 @@ int main(int argc, char* argv[]) {
 
 
         } else { // Worker code goes here
-
+            printf("worker %d start!\n", stripe);
             //broadcast matrix bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
