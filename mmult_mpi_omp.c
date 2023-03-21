@@ -170,6 +170,8 @@ int main(int argc, char* argv[])
             //send stripe back to controller
             MPI_Send(a, sizeof(double) * stripesize, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
 
+            printf("worker %d done!", stripe);
+
             //free(buffer);
             //free(a);
         }
