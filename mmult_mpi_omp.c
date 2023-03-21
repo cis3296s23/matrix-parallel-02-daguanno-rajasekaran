@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
         stripesize = ncols/4;
 
         //malloc for buffer, a, and b
-        buffer = (double*)malloc(sizeof(double) * stripesize);
+        buffer = (double*)malloc(ncols * stripesize);
         a = (double*)malloc(sizeof(double) * nrows * ncols);
         aa = (double*)malloc(sizeof(double) * nrows * ncols);
         bb = (double*)malloc(sizeof(double) * nrows * ncols);
@@ -81,17 +81,15 @@ int main(int argc, char* argv[])
                 }
                 printf("buffer %d\n", k);
                 print_matrix(buffer, ncols, stripesize);
-                MPI_Send(buffer, sizeof(double) * stripesize, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
+                MPI_Send(buffer, ncols * stripesize, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
                 free(buffer);
             }
 
-            int numreceived = 0;
             //receive stripes
             printf("receive stripes %d\n", iter);
 
-            if(iter == 3) {
                 for (i = 0; i < 3; i++) {
-                    MPI_Recv(buffer, sizeof(double) * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+                    MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
                 
                     //get the stripe number
@@ -106,7 +104,7 @@ int main(int argc, char* argv[])
                         }
                     //MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
                 }
-                // MPI_Recv(buffer, sizeof(double) * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+                // MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                 //     MPI_COMM_WORLD, &status);
                 
                 // //get the stripe number
@@ -118,7 +116,7 @@ int main(int argc, char* argv[])
                 //         buffer[j] = cc1[i * ncols + j];
                 //     }
                 // }
-            }
+            
             print_matrix(cc1, nrows, ncols);
             
             printf("mpi timing\n");
@@ -133,14 +131,14 @@ int main(int argc, char* argv[])
         } else { // Worker code goes here
             
             //malloc buffer, a, and  for slaves
-            //buffer = (double*)malloc(sizeof(double) * stripesize);
-            a = (double*)malloc(sizeof(double) * stripesize);
+            //buffer = (double*)malloc(ncols * stripesize);
+            a = (double*)malloc(sizeof(double) * ncols * stripesize);
 
             //broadcast matrix bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             //recieve buffer
-            MPI_Recv(buffer, sizeof(double) * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+            MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
             int stripe = status.MPI_TAG;
             printf("stripe %d\n", stripe);
@@ -165,9 +163,7 @@ int main(int argc, char* argv[])
             printf("\n");
             
             //send stripe back to controller
-            MPI_Send(a, sizeof(double) * stripesize, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
-
-            iter++;
+            MPI_Send(a, ncols * stripesize, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
 
             printf("worker %d done!", stripe);
         }
