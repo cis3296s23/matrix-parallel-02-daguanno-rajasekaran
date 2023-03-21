@@ -101,11 +101,10 @@ int main(int argc, char* argv[])
                     //insert the stripe into the answer matrix cc1
                     for (i = 0; i < stripesize * ncols; i++) {
                             cc1[stripe *ncols + i] = buffer[i];
+                            numreceived++;  
                         }
-                        numreceived++;
-                    }
 
-                    if(numreceived == 3*stripesize) {
+                    if(numreceived == 3*stripesize*ncols) {
                         break;
                     }
                 }
