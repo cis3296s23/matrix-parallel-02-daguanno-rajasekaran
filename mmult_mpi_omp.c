@@ -75,10 +75,10 @@ int main(int argc, char* argv[])
                     for (j = 0; j < ncols; j++) {
                         buffer[i * ncols + j] = aa[i * ncols + j];
                     }
-                    printf("buffer %d\n", k);
-                    print_matrix(buffer, ncols, stripesize);
-                    MPI_Send(buffer, ncols * stripesize, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
                 }
+                printf("buffer %d\n", k);
+                print_matrix(buffer, ncols, stripesize);
+                MPI_Send(buffer, ncols * stripesize, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
                 numsent++;
             }
 
