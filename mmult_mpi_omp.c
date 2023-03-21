@@ -102,10 +102,8 @@ int main(int argc, char* argv[])
                         }
                         numreceived++;
                     }
-                    numreceived = numreceived / nrows;
 
-
-                    if(numreceived == 3) {
+                    if(numreceived == 3*ncols) {
                         break;
                     }
                 }
