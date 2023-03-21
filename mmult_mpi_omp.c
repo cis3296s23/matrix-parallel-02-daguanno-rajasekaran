@@ -38,7 +38,6 @@ int main(int argc, char* argv[]) {
         nrows = atoi(argv[1]);
         ncols = nrows;
         
-
         //set stripesize to number of workers
         stripesize = ncols/ncols;
 
@@ -90,7 +89,7 @@ int main(int argc, char* argv[]) {
 
                 //add line to cc1
                 for (i = 0; i < stripesize * ncols; i++) {
-                    cc1[stripe *ncols + i] = buffer[i];
+                    cc1[stripe *ncols + i] += buffer[i];
                 }
 
                 printf("numsent: %d\n", numsent);
