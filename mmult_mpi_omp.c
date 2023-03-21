@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 
         //malloc for buffer, a, and b
         buffer = (double*)malloc(ncols * stripesize);
-        a = (double*)malloc(sizeof(double) * nrows * ncols);
+        a = (double*)malloc(sizeof(double) * ncols);
         aa = (double*)malloc(sizeof(double) * nrows * ncols);
         bb = (double*)malloc(sizeof(double) * nrows * ncols);
 
@@ -149,10 +149,6 @@ int main(int argc, char* argv[])
             mmult(cc2, aa, nrows, ncols, bb, ncols, nrows);
             compare_matrices(cc2, cc1, nrows, nrows);
         } else { // Worker code goes here
-            
-            //malloc buffer, a, and  for workers
-            //buffer = (double*)malloc(ncols * stripesize);
-            a = (double*)malloc(sizeof(double) * ncols * stripesize);
 
             //broadcast matrix bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
