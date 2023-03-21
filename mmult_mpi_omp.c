@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
             cc1 = malloc(sizeof(double) * nrows * ncols);
 
             //initialize for loop iterators
-            int i, j, k, l;
+            int i, j, k;
 
             //start mpi timing
             starttime = MPI_Wtime();
@@ -81,17 +81,16 @@ int main(int argc, char* argv[]) {
             numsent++;
             }
 
-            ////receive lines from workers, add them to cc1, and then send them a new line unntil there are no more lines
+            //receive lines from workers, add them to cc1, and then send them a new line unntil there are no more lines
             for (i = 0; i < nrows; i++) {
                 //receive line
-                MPI_Recv(buffer, stripesize * ncols, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
-                    MPI_COMM_WORLD, &status);
+                MPI_Recv(buffer, stripesize * ncols, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
                 sender = status.MPI_SOURCE;
                 stripe = status.MPI_TAG;
 
                 //add line to cc1
                 for (i = 0; i < stripesize * ncols; i++) {
-                    cc1[stripe *ncols + i] += buffer[i];
+                    cc1[stripe *ncols + i] = buffer[i];
                 }
 
                 printf("numsent: %d\n", numsent);
@@ -100,8 +99,7 @@ int main(int argc, char* argv[]) {
                     for (j = 0; j < ncols; j++) {
                         buffer[j] = aa[numsent*ncols + j];
                     }  
-                    MPI_Send(buffer, ncols, MPI_DOUBLE, sender, numsent+1, 
-                        MPI_COMM_WORLD);
+                    MPI_Send(buffer, ncols, MPI_DOUBLE, sender, numsent+1, MPI_COMM_WORLD);
                     numsent++;
                     printf("numsent: %d\n", numsent);
                 } else {
@@ -146,6 +144,7 @@ int main(int argc, char* argv[]) {
             printf("mpi timing\n");
             //end MPI timing
             endtime = MPI_Wtime();
+            printf("matrix size %d", ncols);
             printf("%f\n",(endtime - starttime));
 
             //compare matrices with normal mmult
@@ -156,7 +155,7 @@ int main(int argc, char* argv[]) {
 
 
         } else { // Worker code goes here
-        
+
             //broadcast matrix bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
@@ -164,8 +163,7 @@ int main(int argc, char* argv[]) {
                 while(1) {
                     printf("worker %d start!\n", stripe);
                     //recieve buffer, break if the tag is 0
-                    MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
-                            MPI_COMM_WORLD, &status);
+                    MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
                         
                     //printf("stripe %d\n", stripe);
                     if (status.MPI_TAG == 0){
@@ -191,7 +189,7 @@ int main(int argc, char* argv[]) {
                     //send stripe back to controller
                     MPI_Send(a, ncols * stripesize, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
 
-                    printf("print matrix from worker %d\n", stripe);
+                    printf("print line from worker %d\n", stripe);
                     print_matrix(a, nrows, stripesize);
                     printf("worker %d done!\n", stripe);
                 }

@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <omp.h>
 
 #include "mat.h"
 #define min(x, y) ((x)<(y)?(x):(y))
