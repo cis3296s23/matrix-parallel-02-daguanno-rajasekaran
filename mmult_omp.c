@@ -12,7 +12,7 @@
  * @param bCols : the number of columns in b.
  * @return 0 if the matrix multiplication is successful.
  */
-int mmult_omp(double *c,
+double mmult_omp(double *c,
 		      const double *a, int aRows, int aCols,
 		      const double *b, int bRows, int bCols) {
 
@@ -30,6 +30,6 @@ int mmult_omp(double *c,
             }
         }
     }
-    return 0;
+    return *c;
 }
 
