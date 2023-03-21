@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
                 }
                 for (k = 0; k < stripesize; k++) {
                     for (j = 0; j < ncols; j++) {
-                        a[i*ncols + j] += buffer[i*stripesize + k] * bb[k*ncols + j];
+                        a[k * ncols + j] += buffer[k * stripesize + k] * bb[stripe * k * ncols + j];
                     }
                 }
             }
