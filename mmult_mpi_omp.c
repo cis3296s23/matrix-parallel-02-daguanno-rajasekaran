@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     MPI_Status status;
 
     /* insert other global variables here */
-    int stripesize;
+    int stripesize, iter;
     double *a, *buffer;
 
     MPI_Init(&argc, &argv);
@@ -164,6 +164,8 @@ int main(int argc, char* argv[])
             
             //send stripe back to controller
             MPI_Send(a, sizeof(double) * stripesize, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
+
+            iter++;
 
             printf("worker %d done!", stripe);
         }
