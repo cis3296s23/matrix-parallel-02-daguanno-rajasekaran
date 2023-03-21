@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
             bb = gen_matrix(ncols, nrows);
 
             //malloc for cc1(answer matrix)
-            cc1 = malloc(sizeof(double) * nrows * nrows);
+            cc1 = malloc(sizeof(double) * nrows * ncols);
 
             //initialize for loop iterators
             int i, j, k, l;
