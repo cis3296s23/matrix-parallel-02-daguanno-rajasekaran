@@ -92,19 +92,22 @@ int main(int argc, char* argv[])
                     MPI_Recv(buffer, sizeof(double) * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
                 
-                //get the stripe number
-                int stripe = status.MPI_TAG;
-                numreceived++;
+                    //get the stripe number
+                    int stripe = status.MPI_TAG;
 
-                //insert the stripe into the answer matrix cc1
-                for(i = 0; i < nrows; i++) {
-                    for(j = 0; j < ncols; j++) {
-                        buffer[j] = cc1[i * ncols + j];
+                    //insert the stripe into the answer matrix cc1
+                    for(i = 0; i < nrows; i++) {
+                        for(j = 0; j < ncols; j++) {
+                            buffer[j] = cc1[i * ncols + j];
+                        }
+                        numreceived++;
                     }
-                }
-                if(numreceived == 4) {
-                    break;
-                }
+                    numreceived = numreceived / nrows;
+
+
+                    if(numreceived == 4) {
+                        break;
+                    }
                 }
                 // MPI_Recv(buffer, sizeof(double) * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                 //     MPI_COMM_WORLD, &status);
