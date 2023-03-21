@@ -70,6 +70,7 @@ int main(int argc, char* argv[]) {
             //for loop to send each stripe to a worker
             printf("earn your stripes\n");
 
+            //send out first lines to workers
             for (i = 0; i < min(nrows, numprocs-1); i++) {
                 for (j = 0; j < ncols; j++) {
                     buffer[j] = aa[i * ncols + j];
@@ -80,6 +81,7 @@ int main(int argc, char* argv[]) {
             numsent++;
             }
 
+            ////receive lines from workers, add them to cc1, and then send them a new line unntil there are no more lines
             for (i = 0; i < nrows; i++) {
                 //receive line
                 MPI_Recv(buffer, stripesize * ncols, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
@@ -154,12 +156,13 @@ int main(int argc, char* argv[]) {
 
 
         } else { // Worker code goes here
+        
             //broadcast matrix bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             if (myid <= nrows) {
                 while(1) {
-                    //printf("worker %d start!\n", stripe);
+                    printf("worker %d start!\n", stripe);
                     //recieve buffer, break if the tag is 0
                     MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                             MPI_COMM_WORLD, &status);
@@ -188,9 +191,9 @@ int main(int argc, char* argv[]) {
                     //send stripe back to controller
                     MPI_Send(a, ncols * stripesize, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
 
-                    // printf("print matrix from worker %d\n", stripe);
-                    // print_matrix(a, nrows, stripesize);
-                    // printf("worker %d done!\n", stripe);
+                    printf("print matrix from worker %d\n", stripe);
+                    print_matrix(a, nrows, stripesize);
+                    printf("worker %d done!\n", stripe);
                 }
             }
         //     //recieve buffer
