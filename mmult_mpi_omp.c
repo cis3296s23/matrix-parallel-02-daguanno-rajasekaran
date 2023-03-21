@@ -139,7 +139,7 @@ int main(int argc, char* argv[]) {
                 //     }
                 // }
             
-            //print_matrix(cc1, nrows, ncols);
+            print_matrix(cc1, nrows, ncols);
             
             printf("mpi timing\n");
             //end MPI timing
