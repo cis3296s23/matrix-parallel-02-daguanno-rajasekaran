@@ -13,8 +13,8 @@
 
 #include "mat.h"
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
+    
     int nrows, ncols;
     double *aa;	/* the A matrix */
     double *bb;	/* the B matrix */
@@ -218,7 +218,7 @@ int main(int argc, char* argv[])
         //     printf("print matrix from worker %d\n", stripe);
         //     print_matrix(a, nrows, stripesize);
         //     printf("worker %d done!\n", stripe);
-
+        }
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
     }
