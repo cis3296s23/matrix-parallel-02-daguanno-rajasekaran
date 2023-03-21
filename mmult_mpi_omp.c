@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 
     /* insert other global variables here */
     int stripesize;
-    int iter = 0;
+    int numsent = 0;
     double *a, *buffer;
 
     MPI_Init(&argc, &argv);
@@ -64,9 +64,6 @@ int main(int argc, char* argv[])
             starttime = MPI_Wtime();
             /* Insert your controller code here to store the product into cc1 */
             
-            
-
-            printf("controller broadcast\n");
             //broadcast bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
@@ -78,11 +75,16 @@ int main(int argc, char* argv[])
                     for (j = 0; j < ncols; j++) {
                         buffer[i * ncols + j] = aa[i * ncols + j];
                     }
+                    printf("buffer %d\n", k);
+                    print_matrix(buffer, ncols, stripesize);
+                    MPI_Send(buffer, ncols * stripesize, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
+                    free(buffer);
                 }
-                printf("buffer %d\n", k);
-                print_matrix(buffer, ncols, stripesize);
-                MPI_Send(buffer, ncols * stripesize, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
-                free(buffer);
+                numsent++;
+            }
+
+            if(numsent < ncols) {
+
             }
 
             //receive stripes
