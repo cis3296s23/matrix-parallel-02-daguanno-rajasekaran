@@ -104,6 +104,7 @@ int main(int argc, char* argv[]) {
                     numsent++;
                     printf("numsent: %d\n", numsent);
                 } else {
+                    printf("ending process: %d\n", sender);
                     MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
                 }
             }
@@ -163,12 +164,13 @@ int main(int argc, char* argv[]) {
                     //recieve buffer, break if the tag is 0
                     MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                             MPI_COMM_WORLD, &status);
-                    int stripe = status.MPI_TAG;    
+                        
                     //printf("stripe %d\n", stripe);
                     if (status.MPI_TAG == 0){
                         break;
                     }
 
+                    int stripe = status.MPI_TAG;
                     //omp matrix mult of buffer(stripe) and bb to a
                     int i, j, k = 0;
                     #pragma omp parallel default(none) shared(a, bb, buffer, stripesize, ncols) private(i, k, j,stripe)
