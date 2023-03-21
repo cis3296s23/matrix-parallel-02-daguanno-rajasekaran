@@ -157,15 +157,13 @@ int main(int argc, char* argv[])
                     }
                 }
             }
-
-            printf("print matrix from worker %d\n", stripe);
-            print_matrix(a, nrows, stripesize); 
-            printf("\n");
             
             //send stripe back to controller
             MPI_Send(a, ncols * stripesize, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
 
-            printf("worker %d done!", stripe);
+            printf("print matrix from worker %d\n", stripe);
+            print_matrix(a, nrows, stripesize); 
+            printf("worker %d done!\n", stripe);
         }
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
