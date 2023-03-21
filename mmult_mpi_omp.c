@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
             printf("im worker %d\n", status.MPI_TAG);
             
             //malloc buffer, a, and  for slaves
-            buffer = (double*)malloc(sizeof(double) * stripesize);
+            //buffer = (double*)malloc(sizeof(double) * stripesize);
             a = (double*)malloc(sizeof(double) * stripesize);
 
             //broadcast matrix bb (the matrix that each stripe is getting multiplied by)
@@ -166,13 +166,13 @@ int main(int argc, char* argv[])
             }
 
             printf("print matrix from worker %d\n", stripe);
-            print_matrix(a, nrows, stripesize);
+            print_matrix(a, nrows, stripesize); 
             printf("\n");
             
             //send stripe back to controller
             MPI_Send(a, sizeof(double) * stripesize, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
 
-            free(buffer);
+            //free(buffer);
             free(a);
         }
     } else {
