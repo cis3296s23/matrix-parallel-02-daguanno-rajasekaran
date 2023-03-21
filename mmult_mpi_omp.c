@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
                 free(buffer);
             }
 
-            int numreceived
+            int numreceived = 0;
             //receive stripes
             printf("receive stripes\n");
 
