@@ -154,12 +154,12 @@ int main(int argc, char* argv[]) {
 
 
         } else { // Worker code goes here
-            printf("worker %d start!\n", stripe);
             //broadcast matrix bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             if (myid <= nrows) {
                 while(1) {
+                    printf("worker %d start!\n", stripe);
                     //recieve buffer, break if the tag is 0
                     MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                             MPI_COMM_WORLD, &status);
@@ -183,6 +183,7 @@ int main(int argc, char* argv[]) {
                             }
                         }
                     }
+
                     //send stripe back to controller
                     MPI_Send(a, ncols * stripesize, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
 
