@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
             for(l = 0; l < 3; l++) {
             printf("receive stripes\n");
 
-                MPI_Recv(buffer, stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+                MPI_Recv(buffer, sizeof(double) * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
                 
                 //get the stripe number
@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             //recieve buffer
-            MPI_Recv(buffer, stripesize * ncols, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+            MPI_Recv(buffer, sizeof(double) * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
             int stripe = status.MPI_TAG;
             printf("stripe %d\n", stripe);
@@ -151,7 +151,7 @@ int main(int argc, char* argv[])
             // printf("\n");
             
             //send stripe back to controller
-            MPI_Send(a, 1, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
+            MPI_Send(a, sizeof(double) * stripesize, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
         }
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
