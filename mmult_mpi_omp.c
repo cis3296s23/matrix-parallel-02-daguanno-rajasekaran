@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
                     //insert the stripe into the answer matrix cc1
                     for (i = 0; i < stripesize; i++) {
                         for (j = 0; j < ncols; j++) {
-                            cc1[i * ncols + j] = buffer[i * ncols + j];
+                            cc1[stripe * i * ncols + j] = buffer[i * ncols + j];
                         }
                         numreceived++;
                     }
