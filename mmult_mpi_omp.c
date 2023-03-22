@@ -212,6 +212,8 @@ int main(int argc, char* argv[]) {
 
         } else { // Worker code goes here
 
+            printf("hi i am worker %d", myid);
+
             int rows_per_process = nrows / numprocs;
             int remaining_rows = nrows % numprocs;
 
