@@ -44,8 +44,8 @@ int main(int argc, char* argv[]) {
         //malloc for buffer, a, and b
         //buffer = (double*)malloc(ncols * stripesize);
         //a = (double*)malloc(sizeof(double) * ncols);
-        aa = (double*)malloc(sizeof(double) * nrows * ncols);
-        bb = (double*)malloc(sizeof(double) * nrows * ncols);
+        //aa = (double*)malloc(sizeof(double) * nrows * ncols);
+        //bb = (double*)malloc(sizeof(double) * nrows * ncols);
 
         if (myid == 0) {// Controller Code goes here
             printf("matrix size: %d\n", ncols);
@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
 
             //break matrix into chunk
             for (int i = 0, offset = 0; i < numprocs; i++) {
-                int assignedrows = processrows + (i < leftoverrows ? 1 : 0);
+                int assignedrows = processrows;
                 stripes[i] = assignedrows * ncols;
                 startindex[i] = offset;
                 offset += stripes[i];
@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
             //Scatter chunks to processes
             MPI_Scatterv(aa, stripes, startindex, MPI_DOUBLE, localmatrix, localrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-            printf("after scatter\n");
+            printf("after scatterv\n");
             
             //broadcast bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
