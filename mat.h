@@ -6,12 +6,12 @@ int compare_matrices(double* a, double* b, int nRows, int nCols);
 double *read_matrix_from_file(const char *path);
 void print_matrix(double *a, int nrows, int ncols);
 
-int mmult(double *c, 
+double mmult(double *c,
           double *a, int aRows, int aCols, 
           double *b, int bRows, int bCols);
 
-int mmult_omp(double *c,
-		      double *a, int aRows, int aCols,
-		      double *b, int bRows, int bCols);
+double mmult_omp(double *c,
+		      const double *a, int aRows, int aCols,
+		      const double *b, int bRows, int bCols);
 
 #endif
