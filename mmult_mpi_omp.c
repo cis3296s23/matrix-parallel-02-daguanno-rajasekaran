@@ -218,15 +218,15 @@ int main(int argc, char* argv[]) {
             double* local_C = (double*)malloc(local_rows * ncols * sizeof(double));
 
             MPI_Scatterv(NULL, NULL, NULL, MPI_DOUBLE, local_A, local_rows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-            bb = (double*)realloc(bb, ncols * x * sizeof(double));
-            MPI_Bcast(bb, ncols * x, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            bb = (double*)realloc(bb, ncols * nrows * sizeof(double));
+            MPI_Bcast(bb, ncols * nrows, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             // Perform local matrix multiplication
             for (int i = 0; i < local_rows; i++) {
-                for (int j = 0; j < x; j++) {
-                    local_C[i * x + j] = 0;
+                for (int j = 0; j < nrows; j++) {
+                    local_C[i * nrows + j] = 0;
                     for (int k = 0; k < ncols; k++) {
-                        local_C[i * x + j] += local_A[i * ncols + k] * bb[k * x + j];
+                        local_C[i * x + j] += local_A[i * ncols + k] * bb[k * nrows + j];
                     }
                 }
             }
