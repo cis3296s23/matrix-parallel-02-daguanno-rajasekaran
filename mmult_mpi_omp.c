@@ -124,7 +124,7 @@ int main(int argc, char* argv[]) {
             printf("after matrix mult\n");
             
             //gather
-            MPI_Gatherv(localmatrix, localrows * ncols, MPI_DOUBLE, cc1, stripes, startindex, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            MPI_Gatherv(localleftovermatrix, localrows * ncols, MPI_DOUBLE, cc1, stripes, startindex, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             //gg
 
@@ -239,7 +239,7 @@ int main(int argc, char* argv[]) {
 
             printf("worker %d after Scatter\n", myid);
 
-            //bb = (double*)realloc(bb, ncols * nrows * sizeof(double));
+            bb = (double*)realloc(bb, ncols * nrows * sizeof(double));
 
             printf("worker %d after realloc\n", myid);
 
