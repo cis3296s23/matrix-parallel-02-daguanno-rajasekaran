@@ -54,6 +54,8 @@ int main(int argc, char* argv[]) {
             aa = gen_matrix(nrows, ncols);
             bb = gen_matrix(ncols, nrows);
 
+            printf("generated matrices\n");
+
             //malloc for cc1(answer matrix)
             cc1 = malloc(sizeof(double) * nrows * ncols);
 
