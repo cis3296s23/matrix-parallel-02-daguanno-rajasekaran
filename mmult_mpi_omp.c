@@ -230,8 +230,8 @@ int main(int argc, char* argv[]) {
             int remaining_rows = nrows % numprocs;
 
             int local_rows = rows_per_process + (myid < remaining_rows ? 1 : 0);
-            //double* local_A = (double*)malloc(local_rows * ncols * sizeof(double));
-            //double* local_C = (double*)malloc(local_rows * ncols * sizeof(double));
+            double* local_A = (double*)malloc(local_rows * ncols * sizeof(double));
+            double* local_C = (double*)malloc(local_rows * ncols * sizeof(double));
 
             printf("worker %d after malloc\n", myid);
 
