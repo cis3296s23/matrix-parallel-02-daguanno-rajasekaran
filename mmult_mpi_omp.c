@@ -82,9 +82,9 @@ int main(int argc, char* argv[]) {
 
             //break matrix into chunk
             for (int i = 0, offset = 0; i < numprocs; i++) {
-                int assignedrows - processrows + (i < leftoverrows ? 1 : 0);
+                int assignedrows = processrows + (i < leftoverrows ? 1 : 0);
                 stripes[i] = assignedrows * ncols;
-                startindex[i] = offset;2
+                startindex[i] = offset;
                 offset += stripes[i];
             }
 
