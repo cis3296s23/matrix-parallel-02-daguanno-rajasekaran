@@ -157,7 +157,7 @@ int main(int argc, char* argv[]) {
             mmult(cc2, aa, nrows, ncols, bb, ncols, nrows);
             compare_matrices(cc2, cc1, nrows, nrows);
 
-            MPI_Comm_disconnect(&intercomm);
+            MPI_Comm_disconnect(MPI_COMM_NULL);
 
 
 
