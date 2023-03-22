@@ -226,7 +226,7 @@ int main(int argc, char* argv[]) {
                 for (int j = 0; j < nrows; j++) {
                     local_C[i * nrows + j] = 0;
                     for (int k = 0; k < ncols; k++) {
-                        local_C[i * x + j] += local_A[i * ncols + k] * bb[k * nrows + j];
+                        local_C[i * nrows + j] += local_A[i * ncols + k] * bb[k * nrows + j];
                     }
                 }
             }
