@@ -232,7 +232,7 @@ int main(int argc, char* argv[]) {
             }
 
             // Gather results from all processes
-            MPI_Gatherv(local_C, local_rows * x, MPI_DOUBLE, NULL, NULL, NULL, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            MPI_Gatherv(local_C, local_rows * nrows, MPI_DOUBLE, NULL, NULL, NULL, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             free(local_A);
             free(local_C);
