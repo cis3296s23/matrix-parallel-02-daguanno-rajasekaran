@@ -92,10 +92,14 @@ int main(int argc, char* argv[]) {
                 offset += stripes[i];
             }
 
+            printf("after matrix chunks\n");
+
             //malloc for local matrices
             int localrows = processrows + (myid < leftoverrows ? 1 : 0);
             double* localmatrix = (double*)malloc(sizeof(double) * ncols);
             double* localleftovermatrix = (double*)malloc(sizeof(double) * ncols);
+
+            printf("after second malloc\n");
 
             //Scatter chunks to processes
             MPI_Scatterv(aa, stripes, startindex, MPI_DOUBLE, localmatrix, localrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
@@ -214,7 +218,7 @@ int main(int argc, char* argv[]) {
 
         } else { // Worker code goes here
 
-            printf("hi i am worker %d", myid);
+            printf("hi i am worker %d\n", myid);
 
             int rows_per_process = nrows / numprocs;
             int remaining_rows = nrows % numprocs;
