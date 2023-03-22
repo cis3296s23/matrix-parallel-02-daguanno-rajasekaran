@@ -104,8 +104,12 @@ int main(int argc, char* argv[]) {
             //Scatter chunks to processes
             MPI_Scatterv(aa, stripes, startindex, MPI_DOUBLE, localmatrix, localrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
+            printf("after scatter\n");
+            
             //broadcast bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+            printf("after bcast\n");
 
             //local matrix multiplication
             for (int i = 0; i < localrows; i++) {
