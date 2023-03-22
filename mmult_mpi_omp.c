@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
         ncols = nrows;
         
         //set stripesize to number of workers
-        stripesize = min(ncols/numprocs);
+        stripesize = ncols/numprocs;
 
         //malloc for buffer, a, and b
         buffer = (double*)malloc(ncols * stripesize);
@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
             int startindex[numprocs];
 
             //break matrix into chunk
-            for (int i = 0; offset = 0; i < numprocs; i++) {
+            for (int i = 0, offset = 0; i < numprocs; i++) {
                 int assignedrows - processrows + (i < leftoverrows ? 1 : 0);
                 stripes[i] = assignedrows * ncols;
                 startindex[i] = offset;
