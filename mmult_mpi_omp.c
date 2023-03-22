@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
             for (int i = 0, offset = 0; i < numprocs; i++) {
                 int assignedrows - processrows + (i < leftoverrows ? 1 : 0);
                 stripes[i] = assignedrows * ncols;
-                startindex[i] = offset;
+                startindex[i] = offset;2
                 offset += stripes[i];
             }
 
