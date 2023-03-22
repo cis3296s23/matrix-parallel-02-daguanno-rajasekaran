@@ -121,12 +121,14 @@ int main(int argc, char* argv[]) {
                 }
             }
 
+            printf("after matrix mult\n");
+            
             //gather
             MPI_Gatherv(localmatrix, localrows * ncols, MPI_DOUBLE, cc1, stripes, startindex, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             //gg
 
-
+            printf("after Gather\n");
 
 
             /*
@@ -231,9 +233,19 @@ int main(int argc, char* argv[]) {
             double* local_A = (double*)malloc(local_rows * ncols * sizeof(double));
             double* local_C = (double*)malloc(local_rows * ncols * sizeof(double));
 
+            printf("worker after bcast\n");
+
             MPI_Scatterv(NULL, NULL, NULL, MPI_DOUBLE, local_A, local_rows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+            printf("worker after Scatter\n");
+
             bb = (double*)realloc(bb, ncols * nrows * sizeof(double));
+
+            printf("worker after realloc\n");
+
             MPI_Bcast(bb, ncols * nrows, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+            printf("worker after bcast\n");
 
             // Perform local matrix multiplication
             for (int i = 0; i < local_rows; i++) {
@@ -245,15 +257,19 @@ int main(int argc, char* argv[]) {
                 }
             }
 
+            printf("worker after matrix mult\n");
+
             // Gather results from all processes
             MPI_Gatherv(local_C, local_rows * nrows, MPI_DOUBLE, NULL, NULL, NULL, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+            printf("worker after gather\n");
 
             free(local_A);
             free(local_C);
             
             
             
-            
+            printf("worker after free\n");
             
             
             
