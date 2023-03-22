@@ -82,6 +82,8 @@ int main(int argc, char* argv[]) {
             int stripes[numprocs];
             int startindex[numprocs];
 
+            printf("after something\n");
+
             //break matrix into chunk
             for (int i = 0, offset = 0; i < numprocs; i++) {
                 int assignedrows = processrows + (i < leftoverrows ? 1 : 0);
