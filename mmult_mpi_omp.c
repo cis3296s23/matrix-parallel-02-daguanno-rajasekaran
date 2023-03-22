@@ -208,7 +208,7 @@ int main(int argc, char* argv[]) {
             
             printf("worker %d after free\n", myid);
 
-            MPI_Comm_disconnect(MPI_COMM_NULL);
+            MPI_Comm_disconnect(&intercomm);
             
         }
     } else {
