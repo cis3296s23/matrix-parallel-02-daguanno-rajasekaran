@@ -42,8 +42,8 @@ int main(int argc, char* argv[]) {
         stripesize = ncols/numprocs;
 
         //malloc for buffer, a, and b
-        buffer = (double*)malloc(ncols * stripesize);
-        a = (double*)malloc(sizeof(double) * ncols);
+        //buffer = (double*)malloc(ncols * stripesize);
+        //a = (double*)malloc(sizeof(double) * ncols);
         aa = (double*)malloc(sizeof(double) * nrows * ncols);
         bb = (double*)malloc(sizeof(double) * nrows * ncols);
 
