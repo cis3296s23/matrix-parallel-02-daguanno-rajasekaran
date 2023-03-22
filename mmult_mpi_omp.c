@@ -94,7 +94,7 @@ int main(int argc, char* argv[]) {
             double* localleftovermatrix = (double*)malloc(sizeof(double) * ncols);
 
             //Scatter chunks to processes
-            MPI_Scatter(aa, stripes, startindex, MPI_DOUBLE, localmatrix, localrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            MPI_Scatterv(aa, stripes, startindex, MPI_DOUBLE, localmatrix, localrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             //broadcast bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
