@@ -215,7 +215,7 @@ int main(int argc, char* argv[]) {
 
             int local_rows = rows_per_process + (myid < remaining_rows ? 1 : 0);
             double* local_A = (double*)malloc(local_rows * ncols * sizeof(double));
-            double* local_C = (double*)malloc(local_rows * x * sizeof(double));
+            double* local_C = (double*)malloc(local_rows * ncols * sizeof(double));
 
             MPI_Scatterv(NULL, NULL, NULL, MPI_DOUBLE, local_A, local_rows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
             bb = (double*)realloc(bb, ncols * x * sizeof(double));
@@ -311,7 +311,7 @@ int main(int argc, char* argv[]) {
                 //     print_matrix(a, nrows, stripesize);
                 //     printf("worker %d done!\n", stripe);
                 // }
-            }
+            
         //     //recieve buffer
         //     MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
         //             MPI_COMM_WORLD, &status);
