@@ -113,7 +113,7 @@ int main(int argc, char* argv[]) {
 
             //local matrix multiplication
             for (int i = 0; i < localrows; i++) {
-                for(int j = 0; j < localrows; j++) {
+                for(int j = 0; j < ncols; j++) {
                     localleftovermatrix[i * ncols +j] = 0;
                     for(int k = 0; k < ncols; k++) {
                         localleftovermatrix[i * ncols +j] += localmatrix[i *ncols + k] * bb[k * ncols + j];
