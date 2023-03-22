@@ -111,6 +111,20 @@ int main(int argc, char* argv[]) {
 
             printf("after bcast\n");
 
+            if(myid > 0) {
+                
+                //local matrix multiplication
+                for (int i = 0; i < localrows; i++) {
+                    for(int j = 0; j < ncols; j++) {
+                        localleftovermatrix[i * ncols +j] = 0;
+                        for(int k = 0; k < ncols; k++) {
+                            localleftovermatrix[i * ncols +j] += localmatrix[i *ncols + k] * bb[k * ncols + j];
+                        }
+                    }
+                }
+
+            }
+
             //local matrix multiplication
             for (int i = 0; i < localrows; i++) {
                 for(int j = 0; j < ncols; j++) {
@@ -142,6 +156,8 @@ int main(int argc, char* argv[]) {
             cc2  = malloc(sizeof(double) * nrows * nrows);
             mmult(cc2, aa, nrows, ncols, bb, ncols, nrows);
             compare_matrices(cc2, cc1, nrows, nrows);
+
+            MPI_Comm_disconnect(&intercomm);
 
 
 
@@ -191,6 +207,8 @@ int main(int argc, char* argv[]) {
             free(local_C);
             
             printf("worker %d after free\n", myid);
+
+            MPI_Comm_disconnect(MPI_COMM_NULL);
             
         }
     } else {
