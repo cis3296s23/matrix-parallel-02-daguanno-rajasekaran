@@ -104,13 +104,13 @@ int main(int argc, char* argv[]) {
                 for(int j = 0; j < localrows; j++) {
                     localleftovermatrix[i * ncols +j] = 0;
                     for(int k = 0; k < ncols; k++) {
-                        localmatrix[i * ncols +j] += localmatrix[i *ncols + k] * bb[k * ncols + j]
+                        localmatrix[i * ncols +j] += localmatrix[i *ncols + k] * bb[k * ncols + j];
                     }
                 }
             }
 
             //gather
-            MPI_Gather(localmatrix, localrows * ncols, MPI_DOUBLE, cc1, stripes, startindex, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            MPI_Gatherv(localmatrix, localrows * ncols, MPI_DOUBLE, cc1, stripes, startindex, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             //gg
 
