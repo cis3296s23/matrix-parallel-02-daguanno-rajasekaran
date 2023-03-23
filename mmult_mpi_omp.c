@@ -180,11 +180,6 @@ int main(int argc, char* argv[]) {
 
             printf("worker %d after matrix mult\n", myid);
 
-            // Gather results from all processes
-            MPI_Gatherv(local_C, local_rows * nrows, MPI_DOUBLE, NULL, NULL, NULL, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-            printf("worker %d after gather\n", myid);
-
             free(local_A);
             free(local_C);
             
