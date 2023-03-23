@@ -52,9 +52,13 @@ int main(int argc, char* argv[]) {
         if (myid == 0) {// Controller Code goes here
             printf("matrix size: %d\n", ncols);
             printf("generate matrices\n");
+
+
             //generate matrices to multiply together
+            MPI_Barrier(MPI_COMM_WORLD);
             aa = gen_matrix(nrows, ncols);
             bb = gen_matrix(ncols, nrows);
+            MPI_Barrier(MPI_COMM_WORLD);
 
             printf("generated matrices\n");
         }
