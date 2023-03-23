@@ -88,6 +88,22 @@ int main(int argc, char* argv[])
                     }
                 }
             }
+
+            // If there are any remaining rows that weren't evenly divided among the processes,
+            // receive and insert them now
+            if (nrows % stripesize != 0) {
+                int remaining_rows = nrows % stripesize;
+                MPI_Recv(buffer, ncols * remaining_rows, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+                    MPI_COMM_WORLD, &status);
+                
+                // Get the stripe number from the tag
+                int stripe = status.MPI_TAG;
+
+                // Insert the remaining rows into the answer matrix cc1
+                for (int i = 0; i < remaining_rows * ncols; i++) {
+                    cc1[stripe * ncols + i] = buffer[i];
+                }
+            }
             
             printf("mpi timing\n");
             //end MPI timing
