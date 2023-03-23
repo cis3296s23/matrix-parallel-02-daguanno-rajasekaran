@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     printf("generating gnuplot O3 data file . . .\n");
 
     FILE * fp;
-    fp = fopen ("data.txt", "w");
+    fp = fopen ("data.txt", "a");
 
     printf("SIMD '-O3' ->");
     if(SIMD) {

@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
     printf("generating gnuplot data file . . .\n");
 
     FILE * fp;
-    fp = fopen("data.txt", "w+");
+    fp = fopen("data.txt", "a");
 
     printf("file opened\n");
 
