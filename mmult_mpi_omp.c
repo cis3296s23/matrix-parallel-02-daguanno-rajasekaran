@@ -77,6 +77,8 @@ int main(int argc, char* argv[]) {
                 local_A[i] += aa[myid * i];
             }
 
+            printf("worker %d after aa to localA\n", myid);
+
             // Perform local matrix multiplication
             for (int i = 0; i < stripesize; i++) {
                 for (int j = 0; j < nrows; j++) {
@@ -87,13 +89,19 @@ int main(int argc, char* argv[]) {
                 }
             }
 
+            printf("worker %d after mmult\n", myid);
+
             // set cc1 to local_C 
             for(i = 1; i < stripesize + 1; i++) {
                 cc1[myid * i - 1] += local_C[i-1];
             }
 
+            printf("worker %d after cc1 to local_C\n", myid);
+
             //broadcast cc1
             MPI_Bcast(cc1, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+            printf("worker %d after cc1 to Bcast\n", myid);
         }
 
         if(myid == 0) { //controller code
