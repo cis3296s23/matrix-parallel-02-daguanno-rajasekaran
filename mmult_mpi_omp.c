@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/times.h>
-#define min(x, y) ((x)<(y)?(x):(y))
+
 
 #include "mat.h"
 
@@ -33,8 +33,8 @@ int main(int argc, char* argv[])
         ncols = nrows;
         
 
-        //set stripesize to number of workers
-        stripesize = ncols/numprocs;
+        //set stripesize to number of slaves
+        stripesize = ncols/3;
 
         //malloc for buffer, a, and b
         buffer = (double*)malloc(ncols * stripesize * sizeof(double));
@@ -62,8 +62,8 @@ int main(int argc, char* argv[])
             //broadcast bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-            //for loop to send each stripe to a worker
-            for(k = 0; k < numprocs - 1; k++) {
+            //for loop to send each stripe to a slave
+            for(k = 0; k < 3; k++) {
                 for (i = 0; i < stripesize; i++) {
                     for (j = 0; j < ncols; j++) {
                         buffer[i*ncols + j] = aa[(i + k * stripesize) * ncols + j];
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
             }
 
             //receive stripes
-            for (i = 0; i < numprocs - 1; i++) {
+            for (i = 0; i < 3; i++) {
                 MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                 MPI_COMM_WORLD, &status);
             
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
             compare_matrices(cc2, cc1, nrows, nrows);
         } else { // Worker code goes here
             
-            //malloc buffer, a, and  for workers
+            //malloc buffer, a, and  for slaves
             buffer = (double*)malloc(ncols * stripesize * sizeof(double));
             a = (double*)malloc(sizeof(double) * nrows * stripesize);
 
