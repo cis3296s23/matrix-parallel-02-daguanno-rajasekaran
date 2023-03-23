@@ -34,18 +34,13 @@ int main(int argc, char* argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 
     if (argc > 1) {
+
         //get and set number of rows and columns
         nrows = atoi(argv[1]);
         ncols = nrows;
         
         //set stripesize to number of workers
         stripesize = ncols/numprocs;
-
-        //malloc for buffer, a, and b
-        //buffer = (double*)malloc(ncols * stripesize);
-        //a = (double*)malloc(sizeof(double) * ncols);
-        //aa = (double*)malloc(sizeof(double) * nrows * ncols);
-        //bb = (double*)malloc(sizeof(double) * nrows * ncols);
 
         if (myid == 0) {// Controller Code goes here
             printf("matrix size: %d\n", ncols);
@@ -61,92 +56,9 @@ int main(int argc, char* argv[]) {
 
             //initialize for loop iterators
             int i, j, k;
+        }
 
-            //start mpi timing
-            starttime = MPI_Wtime();
-            /* Insert your controller code here to store the product into cc1 */
-
-
-    
-            
-    
-
-            //broadcast bb (the matrix that each stripe is getting multiplied by)
-            MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-            //break array up into pieces
-            int processrows = nrows / numprocs;
-            int leftoverrows = nrows %numprocs;
-
-            //something
-            int stripes[numprocs];
-            int startindex[numprocs];
-
-            printf("after something\n");
-
-            //break matrix into chunk
-            for (int i = 0, offset = 0; i < numprocs; i++) {
-                int assignedrows = processrows;
-                stripes[i] = assignedrows * ncols;
-                startindex[i] = offset;
-                offset += stripes[i];
-            }
-
-            printf("after matrix chunks\n");
-
-            //malloc for local matrices
-            int localrows = processrows + (myid < leftoverrows ? 1 : 0);
-            double* localmatrix = (double*)malloc(sizeof(double) * ncols);
-            double* localleftovermatrix = (double*)malloc(sizeof(double) * ncols);
-
-            printf("after second malloc\n");
-
-            //Scatter chunks to processes
-            MPI_Scatterv(aa, stripes, startindex, MPI_DOUBLE, localmatrix, localrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-            printf("after scatterv\n");
-            
-            //broadcast bb (the matrix that each stripe is getting multiplied by)
-            MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-            printf("after bcast\n");
-
-            //local matrix multiplication
-            for (int i = 0; i < localrows; i++) {
-                for(int j = 0; j < ncols; j++) {
-                    localleftovermatrix[i * ncols +j] = 0;
-                    for(int k = 0; k < ncols; k++) {
-                        localleftovermatrix[i * ncols +j] += localmatrix[i *ncols + k] * bb[k * ncols + j];
-                    }
-                }
-            }
-
-            printf("after matrix mult\n");
-            
-            //gather
-            MPI_Barrier(MPI_COMM_WORLD);
-            MPI_Gatherv(localleftovermatrix, localrows * ncols, MPI_DOUBLE, cc1, stripes, startindex, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-            MPI_Barrier(MPI_COMM_WORLD);
-
-            printf("after Gather\n");
-            
-            MPI_Barrier(MPI_COMM_WORLD);
-            print_matrix(cc1, nrows, ncols);
-            MPI_Barrier(MPI_COMM_WORLD);
-            
-            printf("mpi timing\n");
-            //end MPI timing
-            endtime = MPI_Wtime();
-            printf("matrix size %d", ncols);
-            printf("%f\n",(endtime - starttime));
-
-            //compare matrices with normal mmult
-            cc2  = malloc(sizeof(double) * nrows * nrows);
-            mmult(cc2, aa, nrows, ncols, bb, ncols, nrows);
-            compare_matrices(cc2, cc1, nrows, nrows);
-
-        } else { // Worker code goes here
-
+        if(myid != 0) {
             printf("hi i am worker %d\n", myid);
 
             int rows_per_process = nrows / numprocs;
@@ -157,21 +69,30 @@ int main(int argc, char* argv[]) {
             double* local_C = (double*)malloc(local_rows * ncols * sizeof(double));
 
             printf("worker %d after malloc\n", myid);
+        }
 
-            //MPI_Scatterv(NULL, NULL, NULL, MPI_DOUBLE, local_A, local_rows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        if(myid == 0) {
+            //start mpi timing
+            starttime = MPI_Wtime();
+            /* Insert your controller code here to store the product into cc1 */
 
-            printf("worker %d after Scatter\n", myid);
+            //broadcast bb (the matrix that each stripe is getting multiplied by)
+            MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            MPI_Bcast(aa, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-            bb = (double*)realloc(bb, ncols * nrows * sizeof(double));
+            //break array up into pieces
+            int processrows = nrows / numprocs;
+            int leftoverrows = nrows %numprocs;
+        }
 
-            printf("worker %d after realloc\n", myid);
-
-            MPI_Bcast(bb, ncols * nrows, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-            printf("worker %d after bcast\n", myid);
+        if(myid != 0) {
+            //set local_A to the workers assigned stripe
+            for(i = 0; i < stripesize; i++) {
+                local_A[i] += aa[myid * i];
+            }
 
             // Perform local matrix multiplication
-            for (int i = 0; i < local_rows; i++) {
+            for (int i = 0; i < stripesize; i++) {
                 for (int j = 0; j < nrows; j++) {
                     local_C[i * nrows + j] = 0;
                     for (int k = 0; k < ncols; k++) {
@@ -180,18 +101,122 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            printf("worker %d matrix mult\n", myid);
-            print_matrix(local_C, nrows, ncols);
+            // set cc1 to local_C 
+            for(i = 1; i < stripesize + 1; i++) {
+                cc1[myid * i - 1] += local_C[i-1];
+            }
 
-            free(local_A);
-            free(local_C);
-            
-            printf("worker %d after free\n", myid);
-            
+            //broadcast cc1
+            MPI_Bcast(cc1, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
         }
-    } else {
-        fprintf(stderr, "Usage matrix_times_vector <size>\n");
-    }
+
+        
+            // //malloc for local matrices
+            // int localrows = processrows + (myid < leftoverrows ? 1 : 0);
+            // double* localmatrix = (double*)malloc(sizeof(double) * ncols);
+            // double* localleftovermatrix = (double*)malloc(sizeof(double) * ncols);
+
+            // printf("after second malloc\n");
+
+            // //Scatter chunks to processes
+            // MPI_Scatterv(aa, stripes, startindex, MPI_DOUBLE, localmatrix, localrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+            // printf("after scatterv\n");
+            
+            // //broadcast bb (the matrix that each stripe is getting multiplied by)
+            // MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+            // printf("after bcast\n");
+
+            // //local matrix multiplication
+            // for (int i = 0; i < localrows; i++) {
+            //     for(int j = 0; j < ncols; j++) {
+            //         localleftovermatrix[i * ncols +j] = 0;
+            //         for(int k = 0; k < ncols; k++) {
+            //             localleftovermatrix[i * ncols +j] += localmatrix[i *ncols + k] * bb[k * ncols + j];
+            //         }
+            //     }
+            // }
+
+            // printf("after matrix mult\n");
+            
+            // //gather
+            // MPI_Barrier(MPI_COMM_WORLD);
+            // MPI_Gatherv(localleftovermatrix, localrows * ncols, MPI_DOUBLE, cc1, stripes, startindex, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            // MPI_Barrier(MPI_COMM_WORLD);
+
+            // printf("after Gather\n");
+            
+            MPI_Barrier(MPI_COMM_WORLD);
+            print_matrix(cc1, nrows, ncols);
+            MPI_Barrier(MPI_COMM_WORLD);
+            
+            
+            //end MPI timing
+            printf("mpi timing\n");
+            endtime = MPI_Wtime();
+
+            //print matrix size and time taken
+            printf("matrix size %d", ncols);
+            printf("%f\n",(endtime - starttime));
+
+            //compare matrices with normal mmult
+            cc2  = malloc(sizeof(double) * nrows * nrows);
+            mmult(cc2, aa, nrows, ncols, bb, ncols, nrows);
+            compare_matrices(cc2, cc1, nrows, nrows);
+
+        } 
+ 
+    //     if(myid != 0) {
+    //         printf("hi i am worker %d\n", myid);
+
+    //         int rows_per_process = nrows / numprocs;
+    //         int remaining_rows = nrows % numprocs;
+
+    //         int local_rows = rows_per_process + (myid < remaining_rows ? 1 : 0);
+    //         double* local_A = (double*)malloc(local_rows * ncols * sizeof(double));
+    //         double* local_C = (double*)malloc(local_rows * ncols * sizeof(double));
+
+    //         printf("worker %d after malloc\n", myid);
+    //     }
+
+    //         printf("hi i am worker %d\n", myid);
+
+    //         int rows_per_process = nrows / numprocs;
+    //         int remaining_rows = nrows % numprocs;
+
+    //         int local_rows = rows_per_process + (myid < remaining_rows ? 1 : 0);
+    //         double* local_A = (double*)malloc(local_rows * ncols * sizeof(double));
+    //         double* local_C = (double*)malloc(local_rows * ncols * sizeof(double));
+
+    //         printf("worker %d after malloc\n", myid);
+
+    //         //MPI_Scatterv(NULL, NULL, NULL, MPI_DOUBLE, local_A, local_rows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+    //         printf("worker %d after Scatter\n", myid);
+
+    //         bb = (double*)realloc(bb, ncols * nrows * sizeof(double));
+
+    //         printf("worker %d after realloc\n", myid);
+
+    //         MPI_Bcast(bb, ncols * nrows, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+    //         printf("worker %d after bcast\n", myid);
+
+            
+
+    //         printf("worker %d matrix mult\n", myid);
+    //         print_matrix(local_C, nrows, ncols);
+
+    //         free(local_A);
+    //         free(local_C);
+            
+    //         printf("worker %d after free\n", myid);
+            
+    //     }
+    // } else {
+    //     fprintf(stderr, "Usage matrix_times_vector <size>\n");
+    // }
     MPI_Finalize();
     return 0;
 }
