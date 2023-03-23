@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     FILE * fp;
     fp = fopen ("data.txt", "w");
 
-    printf("SIMD '-O3' ->")
+    printf("SIMD '-O3' ->");
 
     for (int i = 0; i <= 3000; i = i + 60) {
         printf("Calculating SIMD -O3 size: %d", i);
