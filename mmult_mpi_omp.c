@@ -29,6 +29,9 @@ int main(int argc, char* argv[]) {
     int numsent = 0;
     double *a, *buffer;
 
+    //initialize for loop iterators
+    int i, j, k;
+
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
@@ -47,7 +50,8 @@ int main(int argc, char* argv[]) {
         //aa = (double*)malloc(sizeof(double) * nrows * ncols);
         //bb = (double*)malloc(sizeof(double) * nrows * ncols);
 
-        if (myid == 0) {// Controller Code goes here
+        if(myid == 0) { //root code
+
             printf("matrix size: %d\n", ncols);
             printf("generate matrices\n");
             //generate matrices to multiply together
@@ -59,17 +63,11 @@ int main(int argc, char* argv[]) {
             //malloc for cc1(answer matrix)
             cc1 = malloc(sizeof(double) * nrows * ncols);
 
-            //initialize for loop iterators
-            int i, j, k;
+            
 
             //start mpi timing
             starttime = MPI_Wtime();
-            /* Insert your controller code here to store the product into cc1 */
-
-
-    
-            
-    
+            /* Insert your controller code here to store the product into cc1 */ 
 
             //broadcast bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
@@ -122,28 +120,21 @@ int main(int argc, char* argv[]) {
             }
 
             printf("after matrix mult\n");
+
+
             
             //gather
+            MPI_Barrier(MPI_COMM_WORLD);
             MPI_Gatherv(localleftovermatrix, localrows * ncols, MPI_DOUBLE, cc1, stripes, startindex, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-            //gg
+            MPI_Barrier(MPI_COMM_WORLD);
 
             printf("after Gather\n");
             
             print_matrix(cc1, nrows, ncols);
             
-            printf("mpi timing\n");
-            //end MPI timing
-            endtime = MPI_Wtime();
-            printf("matrix size %d", ncols);
-            printf("%f\n",(endtime - starttime));
+        } // root code ends here
 
-            //compare matrices with normal mmult
-            cc2  = malloc(sizeof(double) * nrows * nrows);
-            mmult(cc2, aa, nrows, ncols, bb, ncols, nrows);
-            compare_matrices(cc2, cc1, nrows, nrows);
-
-        } else { // Worker code goes here
+        if(myid != 0) { //worker code
 
             printf("hi i am worker %d\n", myid);
 
@@ -156,7 +147,7 @@ int main(int argc, char* argv[]) {
 
             printf("worker %d after malloc\n", myid);
 
-            MPI_Scatterv(NULL, NULL, NULL, MPI_DOUBLE, local_A, local_rows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            //MPI_Scatterv(NULL, NULL, NULL, MPI_DOUBLE, local_A, local_rows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             printf("worker %d after Scatter\n", myid);
 
@@ -184,8 +175,22 @@ int main(int argc, char* argv[]) {
             free(local_C);
             
             printf("worker %d after free\n", myid);
-            
-        }
+
+        } //worker code ends here
+
+
+        if(myid == 0){ //root code begins here
+            printf("mpi timing\n");
+            //end MPI timing
+            endtime = MPI_Wtime();
+            printf("matrix size %d", ncols);
+            printf("%f\n",(endtime - starttime));
+
+            //compare matrices with normal mmult
+            cc2  = malloc(sizeof(double) * nrows * nrows);
+            mmult(cc2, aa, nrows, ncols, bb, ncols, nrows);
+            compare_matrices(cc2, cc1, nrows, nrows);
+        } //root code ends here
     } else {
         fprintf(stderr, "Usage matrix_times_vector <size>\n");
     }
