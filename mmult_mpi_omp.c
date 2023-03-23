@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
                 //insert the stripe into the answer matrix cc1
                 for (j = 0; j < stripesize; j++) {
                     for (k = 0; k < nrows; k++) {
-                        cc1[(j + stripe * stripesize) * nrows + k] = buffer[j * nrows + k]
+                        cc1[(j + stripe * stripesize) * nrows + k] = buffer[j * nrows + k];
                     }
                 }
             }
@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
 
             //omp matrix mult of buffer(stripe) and bb to a
             int i, j, k = 0;
-            #pragma omp parallel default(none) shared(a, bb, buffer, stripesize, ncols) private(i, k, j,stripe)
+            #pragma omp parallel default(none) shared(a, bb, buffer, stripesize, ncols, nrows) private(i, k, j,stripe)
             #pragma omp for
             for (i = 0; i < stripesize; i++) {
                 for (j = 0; j < nrows; j++) {
