@@ -4,7 +4,7 @@
  * to distribute the computation among threads.
  */
 
-#include "mpi.h"
+#include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -145,7 +145,7 @@ int main(int argc, char* argv[]) {
 
         } else { // Worker code goes here
 
-            MPI_Probe(0, myid, MPI_STATUS_IGNORE);
+            MPI_Probe(0, myid, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
             printf("hi i am worker %d\n", myid);
 
