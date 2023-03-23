@@ -130,7 +130,9 @@ int main(int argc, char* argv[]) {
 
             printf("after Gather\n");
             
+            MPI_Barrier(MPI_COMM_WORLD);
             print_matrix(cc1, nrows, ncols);
+            MPI_Barrier(MPI_COMM_WORLD);
             
             printf("mpi timing\n");
             //end MPI timing
