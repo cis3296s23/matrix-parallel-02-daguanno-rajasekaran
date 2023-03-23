@@ -8,7 +8,6 @@
 #include "mmult_simd.c"
 #include "mmult.c"
 #include "mmult_omp.c"
-//#include "mmult_mpi_omp.c"
 #include "mat.c"
 #include "mat.h"
 
