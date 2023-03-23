@@ -18,8 +18,8 @@ int main(int argc, char *argv[]) {
 
     //test which approaches
     bool unoptimized = false;
-    bool SIMD = true;
-    bool OMP = true;
+    bool SIMD = false;
+    bool OMP = false;
 
     int i = 0;
 
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
             free(b);
             free(c_calc);
         }
-    }
+    } else { fprintf(fp, "0 0");}
 
     fprintf(fp, "\n\n");
 
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
             free(b);
             free(c_calc);
         }
-    }
+    } else { fprintf(fp, "0 0");}
 
     fprintf(fp, "\n\n");
 
