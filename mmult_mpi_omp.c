@@ -11,8 +11,6 @@ int main(int argc, char** argv) {
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-  printf("Rank %d/%d: MPI initialized\n", rank, size);
-
   // Only run if there are enough processes to run in parallel
   if (size < 2) {
     if (rank == 0) {
@@ -21,8 +19,6 @@ int main(int argc, char** argv) {
     MPI_Finalize();
     exit(0);
   }
-
-  printf("Rank %d/%d: Matrix initialization started\n", rank, size);
 
   // Matrix A and B
   double A[MAT_SIZE][MAT_SIZE];
@@ -46,16 +42,19 @@ int main(int argc, char** argv) {
     }
   }
 
-  printf("Rank %d/%d: Matrix B broadcasting started\n", rank, size);
-
-  // Distribute matrix B
-  MPI_Bcast(B, MAT_SIZE * MAT_SIZE, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-  printf("Rank %d/%d: Matrix computation started\n", rank, size);
+  // Divide work among processes using MPI_Scatterv()
+  int* sendcounts = malloc(size * sizeof(int));
+  int* displs = malloc(size * sizeof(int));
+  int chunk_size = MAT_SIZE / size;
+  for (int i = 0; i < size; i++) {
+    sendcounts[i] = chunk_size * MAT_SIZE;
+    displs[i] = i * chunk_size * MAT_SIZE;
+  }
+  MPI_Scatterv(B, sendcounts, displs, MPI_DOUBLE, B, chunk_size * MAT_SIZE, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
   // Divide work among processes using OpenMP
   #pragma omp parallel for shared(A, B, C)
-  for (int i = rank; i < MAT_SIZE; i += size) {
+  for (int i = rank * chunk_size; i < (rank + 1) * chunk_size; i++) {
     for (int j = 0; j < MAT_SIZE; j++) {
       C[i][j] = 0.0;
       for (int k = 0; k < MAT_SIZE; k++) {
@@ -64,13 +63,12 @@ int main(int argc, char** argv) {
     }
   }
 
-  printf("Rank %d/%d: Matrix computation finished\n", rank, size);
-
-  // Gather results to the root process
-  int chunk_size = MAT_SIZE / size;
-  MPI_Gather(C[MAT_SIZE/size*rank], chunk_size * MAT_SIZE, MPI_DOUBLE, C, chunk_size * MAT_SIZE, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-  printf("Rank %d/%d: MPI gathering finished\n", rank, size);
+  // Gather results to the root process using MPI_Gatherv()
+  for (int i = 0; i < size; i++) {
+    sendcounts[i] = chunk_size * MAT_SIZE;
+    displs[i] = i * chunk_size * MAT_SIZE;
+  }
+  MPI_Gatherv(C[rank * chunk_size], chunk_size * MAT_SIZE, MPI_DOUBLE, C, sendcounts, displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
   // Only the root process prints the result
   if (rank == 0) {
@@ -82,8 +80,6 @@ int main(int argc, char** argv) {
       printf("\n");
     }
   }
-
-  printf("Rank %d/%d: MPI finalized\n", rank, size);
 
   MPI_Finalize();
   return 0;
