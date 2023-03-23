@@ -145,6 +145,8 @@ int main(int argc, char* argv[]) {
 
         } else { // Worker code goes here
 
+            MPI_Probe(0, myid, MPI_STATUS_IGNORE);
+
             printf("hi i am worker %d\n", myid);
 
             int rows_per_process = nrows / numprocs;
