@@ -94,6 +94,8 @@ int main(int argc, char *argv[]) {
 
     fprintf(fp, "\n\n");
 
+    printf("OMP ->\n");
+
     //if(OMP) {
         for (i = 0; i <= 3000; i = i + 60) {
             printf("Calculating OMP size: %d", i);

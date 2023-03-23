@@ -17,6 +17,8 @@ int main(int argc, char *argv[]) {
     FILE * fp;
     fp = fopen ("data.txt", "w");
 
+    printf("SIMD '-O3' ->")
+
     for (int i = 0; i <= 3000; i = i + 60) {
         printf("Calculating SIMD -O3 size: %d", i);
         fprintf(fp, "%d ", i);
@@ -37,6 +39,7 @@ int main(int argc, char *argv[]) {
         clock_gettime(CLOCK_REALTIME, &tps);
         mmult_simd(c_calc, a, i, i, b, i, i);
         clock_gettime(CLOCK_REALTIME, &tpe);
+        printf(", time = %f \n", deltaTime(&tps, &tpe));
         fprintf(fp, "%f\n", deltaTime(&tps, &tpe));
 
         free(a);
