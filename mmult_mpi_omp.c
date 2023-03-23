@@ -88,33 +88,6 @@ int main(int argc, char* argv[])
                     }
                 }
             }
-
-
-
-            // If there are any remaining rows that weren't evenly divided among the processes,
-            // receive and insert them now
-            if (nrows % stripesize != 0) {
-                int remaining_rows = nrows % stripesize;
-
-                double* extraboys = malloc(sizeof(double) * nrows * nrows);
-                int stripe = stripesize*numprocs;
-                
-                for (i = 0; i < remaining_rows; i++) {
-                    for (j = 0; j < nrows; j++) {
-                        extraboys[i * nrows + j] = 0;
-                    }
-                    for (k = 0; k < ncols; k++) {
-                        for (j = 0; j < nrows; j++) {
-                            extraboys[i * nrows + j] += aa[i * ncols + k] * bb[stripe * nrows + j];
-                        }
-                    }
-                }
-
-                // Insert the remaining rows into the answer matrix cc1
-                for (int i = 0; i < remaining_rows * ncols; i++) {
-                    cc1[stripe * ncols + i] = extraboys[i];
-                }
-            }
             
             printf("mpi timing\n");
             //end MPI timing
