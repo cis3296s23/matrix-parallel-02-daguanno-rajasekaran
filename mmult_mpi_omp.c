@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
         
 
         //set stripesize to number of workers
-        stripesize = ncols/3;
+        stripesize = ncols/numprocs;
 
         //malloc for buffer, a, and b
         buffer = (double*)malloc(ncols * stripesize * sizeof(double));
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             //for loop to send each stripe to a worker
-            for(k = 0; k < 3; k++) {
+            for(k = 0; k < numprocs; k++) {
                 for (i = 0; i < stripesize; i++) {
                     for (j = 0; j < ncols; j++) {
                         buffer[i*ncols + j] = aa[(i + k * stripesize) * ncols + j];
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
             }
 
             //receive stripes
-            for (i = 0; i < 3; i++) {
+            for (i = 0; i < numprocs; i++) {
                 MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                 MPI_COMM_WORLD, &status);
             
@@ -97,8 +97,7 @@ int main(int argc, char* argv[])
                 int remaining_rows = nrows % stripesize;
 
                 double* extraboys = malloc(sizeof(double) * nrows * nrows);
-
-
+                int stripe = stripesize*numprocs;
                 
                 for (i = 0; i < remaining_rows; i++) {
                     for (j = 0; j < nrows; j++) {
@@ -106,10 +105,10 @@ int main(int argc, char* argv[])
                     }
                     for (k = 0; k < ncols; k++) {
                         for (j = 0; j < nrows; j++) {
-                            extraboys[i * nrows + j] += aa[i * ncols + k] * bb[(stripesize*3) * nrows + j];
+                            extraboys[i * nrows + j] += aa[i * ncols + k] * bb[stripe * nrows + j];
                         }
                     }
-            }
+                }
 
                 // Insert the remaining rows into the answer matrix cc1
                 for (int i = 0; i < remaining_rows * ncols; i++) {
