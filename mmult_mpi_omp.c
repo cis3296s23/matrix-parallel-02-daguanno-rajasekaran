@@ -10,10 +10,10 @@
 int main(int argc, char* argv[])
 {
     int nrows, ncols;
-    double *aa;	/* the A matrix */
-    double *bb;	/* the B matrix */
-    double *cc1;	/* A x B computed using the omp-mpi code you write */
-    double *cc2;	/* A x B computed using the conventional algorithm */
+    double *aa;    /* the A matrix */
+    double *bb;    /* the B matrix */
+    double *cc1;    /* A x B computed using the omp-mpi code you write */
+    double *cc2;    /* A x B computed using the conventional algorithm */
     int myid, numprocs;
     double starttime, endtime;
     MPI_Status status;
@@ -82,27 +82,12 @@ int main(int argc, char* argv[])
                 int stripe = status.MPI_TAG;
 
                 //insert the stripe into the answer matrix cc1
-                for (i = 0; i < stripesize; i++) {
-                    for (j = 0; j < nrows; j++) {
-                        cc1[(i + stripe * stripesize) * nrows + j] = buffer[i * nrows + j];
+                for (j = 0; j < stripesize; j++) {
+                    for (k = 0; k < nrows; k++) {
+                        cc1[(j + stripe * stripesize) * nrows + k] = buffer[j * nrows + k]
                     }
                 }
-                //MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
             }
-                // MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
-                //     MPI_COMM_WORLD, &status);
-                
-                // //get the stripe number
-                // int stripe = status.MPI_TAG;
-
-                // //insert the stripe into the answer matrix cc1
-                // for(i = 0; i < nrows; i++) {
-                //     for(j = 0; j < ncols; j++) {
-                //         buffer[j] = cc1[i * ncols + j];
-                //     }
-                // }
-            
-            print_matrix(cc1, nrows, ncols);
             
             printf("mpi timing\n");
             //end MPI timing
@@ -116,42 +101,37 @@ int main(int argc, char* argv[])
         } else { // Worker code goes here
             
             //malloc buffer, a, and  for slaves
-            //buffer = (double*)malloc(ncols * stripesize);
-            a = (double*)malloc(sizeof(double) * ncols * stripesize);
+            buffer = (double*)malloc(ncols * stripesize * sizeof(double));
+            a = (double*)malloc(sizeof(double) * nrows * stripesize);
 
             //broadcast matrix bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             //recieve buffer
-            MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
+            MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, 0, MPI_ANY_TAG, 
                     MPI_COMM_WORLD, &status);
             int stripe = status.MPI_TAG;
-            printf("stripe %d\n", stripe);
 
             //omp matrix mult of buffer(stripe) and bb to a
             int i, j, k = 0;
             #pragma omp parallel default(none) shared(a, bb, buffer, stripesize, ncols) private(i, k, j,stripe)
             #pragma omp for
             for (i = 0; i < stripesize; i++) {
-                for (j = 0; j < ncols; j++) {
-                    a[i*ncols + j] = 0;
+                for (j = 0; j < nrows; j++) {
+                    a[i * nrows + j] = 0;
                 }
-                for (k = 0; k < stripesize; k++) {
-                    for (j = 0; j < ncols; j++) {
-                        a[k * ncols + j] += buffer[k * stripesize + k] * bb[stripe * k * ncols + j];
+                for (k = 0; k < ncols; k++) {
+                    for (j = 0; j < nrows; j++) {
+                        a[i * nrows + j] += buffer[i * ncols + k] * bb[k * nrows + j];
                     }
                 }
             }
             
-            //send stripe back to controll	er
-            MPI_Send(a, ncols * stripesize, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
-
-            printf("print matrix from worker %d\n", stripe);
-            print_matrix(a, nrows, stripesize);
-            printf("worker %d done!\n", stripe);
+            //send stripe back to controller
+            MPI_Send(a, nrows * stripesize, MPI_DOUBLE, 0, stripe, MPI_COMM_WORLD);
         }
     } else {
-        fprintf(stderr, "Usage matrix_times_vector <size>\n");
+        fprintf(stderr, "Usage mmult_mpi_omp <size>\n");
     }
     MPI_Finalize();
     return 0;
