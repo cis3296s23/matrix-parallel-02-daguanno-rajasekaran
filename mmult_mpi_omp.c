@@ -3,57 +3,73 @@
 #include <mpi.h>
 #include <omp.h>
 
-#define N 1000 // size of matrices
+#define MAT_SIZE 1000
 
 int main(int argc, char** argv) {
-    int num_procs, rank;
-    MPI_Init(&argc, &argv);
-    MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  int rank, size;
+  MPI_Init(&argc, &argv);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    // each process initializes its own chunk of matrices
-    int chunk_size = N / num_procs;
-    int A = (int)malloc(chunk_size * N * sizeof(int));
-    int B = (int)malloc(chunk_size * N * sizeof(int));
-    int C = (int)malloc(chunk_size * N * sizeof(int));
-
-    // initialize matrices A and B
-    for (int i = 0; i < chunk_size * N; i++) {
-        A[i] = i;
-        B[i] = i;
-    }
-
-    // multiply matrices using OpenMP parallelization
-    #pragma omp parallel for collapse(2)
-    for (int i = 0; i < chunk_size; i++) {
-        for (int j = 0; j < N; j++) {
-            int sum = 0;
-            for (int k = 0; k < N; k++) {
-                sum += A[iN + k] B[kN + j];
-            }
-            C[iN + j] = sum;
-        }
-    }
-
-    // collect all the chunks of C from each process
-    MPI_Gather(C, chunk_size * N, MPI_INT, C, chunk_size * N, MPI_INT, 0, MPI_COMM_WORLD);
-
-    // print out the resulting matrix C from process 0
+  // Only run if there are enough processes to run in parallel
+  if (size < 2) {
     if (rank == 0) {
-        printf("Matrix C:\n");
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                printf("%d ", C[i*N + j]);
-            }
-            printf("\n");
-        }
+      printf("At least 2 processes are required.\n");
+    }
+    MPI_Finalize();
+    exit(0);
+  }
+
+  // Matrix A and B
+  double A[MAT_SIZE][MAT_SIZE];
+  double B[MAT_SIZE][MAT_SIZE];
+  double C[MAT_SIZE][MAT_SIZE];
+
+  // Only the root process initializes the matrices
+  if (rank == 0) {
+    // Initialize matrix A
+    for (int i = 0; i < MAT_SIZE; i++) {
+      for (int j = 0; j < MAT_SIZE; j++) {
+        A[i][j] = i + j;
+      }
     }
 
-    // free memory
-    free(A);
-    free(B);
-    free(C);
+    // Initialize matrix B
+    for (int i = 0; i < MAT_SIZE; i++) {
+      for (int j = 0; j < MAT_SIZE; j++) {
+        B[i][j] = i - j;
+      }
+    }
+  }
 
-    MPI_Finalize();
-    return 0;
+  // Distribute matrix B
+  MPI_Bcast(B, MAT_SIZE * MAT_SIZE, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+  // Divide work among processes using OpenMP
+  #pragma omp parallel for shared(A, B, C)
+  for (int i = rank; i < MAT_SIZE; i += size) {
+    for (int j = 0; j < MAT_SIZE; j++) {
+      C[i][j] = 0.0;
+      for (int k = 0; k < MAT_SIZE; k++) {
+        C[i][j] += A[i][k] * B[k][j];
+      }
+    }
+  }
+
+  // Gather results to the root process
+  MPI_Gather(C[MAT_SIZE/sizerank], MAT_SIZE MAT_SIZE/size, MPI_DOUBLE, C, MAT_SIZE * MAT_SIZE/size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+  // Only the root process prints the result
+  if (rank == 0) {
+    printf("Result:\n");
+    for (int i = 0; i < MAT_SIZE; i++) {
+      for (int j = 0; j < MAT_SIZE; j++) {
+        printf("%f ", C[i][j]);
+      }
+      printf("\n");
+    }
+  }
+
+  MPI_Finalize();
+  return 0;
 }
