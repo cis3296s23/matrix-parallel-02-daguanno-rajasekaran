@@ -1,9 +1,3 @@
-/** 
- * Incomplete program to multiply a matrix times a matrix using both
- * MPI to distribute the computation among nodes and OMP
- * to distribute the computation among threads.
- */
-
 #include "mpi.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,8 +37,8 @@ int main(int argc, char* argv[])
         stripesize = ncols/3;
 
         //malloc for buffer, a, and b
-        buffer = (double*)malloc(ncols * stripesize);
-        a = (double*)malloc(sizeof(double) * nrows * ncols);
+        buffer = (double*)malloc(ncols * stripesize * sizeof(double));
+        a = (double*)malloc(sizeof(double) * nrows * stripesize);
         aa = (double*)malloc(sizeof(double) * nrows * ncols);
         bb = (double*)malloc(sizeof(double) * nrows * ncols);
 
@@ -70,25 +64,16 @@ int main(int argc, char* argv[])
 
             //for loop to send each stripe to a slave
             for(k = 0; k < 3; k++) {
-            printf("earn your stripes\n");
-
                 for (i = 0; i < stripesize; i++) {
                     for (j = 0; j < ncols; j++) {
-                        buffer[i*ncols + j] = aa[i * ncols + j + k*ncols*stripesize];
+                        buffer[i*ncols + j] = aa[(i + k * stripesize) * ncols + j];
                     }
                 }
-                printf("buffer %d\n", k);
-                print_matrix(buffer, ncols, stripesize);
                 MPI_Send(buffer, ncols * stripesize, MPI_DOUBLE, k+1, k, MPI_COMM_WORLD);
                 numsent++;
             }
 
-            // while(numsent < ncols) {
-                
-            // }
-
             //receive stripes
-
             for (i = 0; i < 3; i++) {
                 MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                 MPI_COMM_WORLD, &status);
@@ -96,13 +81,12 @@ int main(int argc, char* argv[])
                 //get the stripe number
                 int stripe = status.MPI_TAG;
 
-                printf("buffer in loop\n");
-                print_matrix(buffer, ncols, stripesize);
-
                 //insert the stripe into the answer matrix cc1
-                for (i = 0; i < stripesize * ncols; i++) {
-                        cc1[stripe *ncols + i] = buffer[i];
+                for (i = 0; i < stripesize; i++) {
+                    for (j = 0; j < nrows; j++) {
+                        cc1[(i + stripe * stripesize) * nrows + j] = buffer[i * nrows + j];
                     }
+                }
                 //MPI_Send(MPI_BOTTOM, 0, MPI_DOUBLE, sender, 0, MPI_COMM_WORLD);
             }
                 // MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
