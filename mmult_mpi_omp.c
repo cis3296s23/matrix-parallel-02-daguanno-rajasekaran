@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
         ncols = nrows;
         
 
-        //set stripesize to number of slaves
+        //set stripesize to number of workers
         stripesize = ncols/3;
 
         //malloc for buffer, a, and b
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
             //broadcast bb (the matrix that each stripe is getting multiplied by)
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-            //for loop to send each stripe to a slave
+            //for loop to send each stripe to a worker
             for(k = 0; k < 3; k++) {
                 for (i = 0; i < stripesize; i++) {
                     for (j = 0; j < ncols; j++) {
@@ -89,19 +89,31 @@ int main(int argc, char* argv[])
                 }
             }
 
+
+
             // If there are any remaining rows that weren't evenly divided among the processes,
             // receive and insert them now
             if (nrows % stripesize != 0) {
                 int remaining_rows = nrows % stripesize;
-                MPI_Recv(buffer, ncols * remaining_rows, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
-                    MPI_COMM_WORLD, &status);
+
+                double* extraboys = malloc(sizeof(double) * nrows * nrows);
+
+
                 
-                // Get the stripe number from the tag
-                int stripe = status.MPI_TAG;
+                for (i = 0; i < remaining_rows; i++) {
+                    for (j = 0; j < nrows; j++) {
+                        extraboys[i * nrows + j] = 0;
+                    }
+                    for (k = 0; k < ncols; k++) {
+                        for (j = 0; j < nrows; j++) {
+                            extraboys[i * nrows + j] += aa[i * ncols + k] * bb[(stripesize*3) * nrows + j];
+                        }
+                    }
+            }
 
                 // Insert the remaining rows into the answer matrix cc1
                 for (int i = 0; i < remaining_rows * ncols; i++) {
-                    cc1[stripe * ncols + i] = buffer[i];
+                    cc1[stripe * ncols + i] = extraboys[i];
                 }
             }
             
@@ -116,7 +128,7 @@ int main(int argc, char* argv[])
             compare_matrices(cc2, cc1, nrows, nrows);
         } else { // Worker code goes here
             
-            //malloc buffer, a, and  for slaves
+            //malloc buffer, a, and  for workers
             buffer = (double*)malloc(ncols * stripesize * sizeof(double));
             a = (double*)malloc(sizeof(double) * nrows * stripesize);
 
