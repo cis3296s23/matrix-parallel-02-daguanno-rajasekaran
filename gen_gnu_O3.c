@@ -7,7 +7,6 @@
 
 #include "mmult_simd.c"
 #include "mmult.c"
-//#include "mmult_mpi_omp.c"
 #include "mat.c"
 #include "mat.h"
 
@@ -18,7 +17,7 @@ int main(int argc, char *argv[]) {
     FILE * fp;
     fp = fopen ("data.txt", "w");
 
-    for (int i = 0; i <= 6000; i = i + 60) {
+    for (int i = 0; i <= 3000; i = i + 60) {
         printf("Calculating SIMD -O3 size: %d", i);
         fprintf(fp, "%d ", i);
         
