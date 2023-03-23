@@ -93,6 +93,7 @@ int main(int argc, char* argv[])
             
             //end MPI timing
             endtime = MPI_Wtime();
+            printf("Calculating MPI size: %d, time = %f", ncols, (endtime - starttime));
             fprintf(fp, "%f\n",(endtime - starttime));
 
             //compare matrices with normal mmult

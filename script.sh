@@ -30,7 +30,7 @@ echo "running mpi"
 for ((i=start; i<=end; i+=step))
 do
     echo "Calculating MPI size: $i"
-    mpiexec -f ~/hosts -n 4 ./mmult_mpi_omp $i
+    mpiexec -f ~/hosts -n 4 ./mmult_mpi $i
 done
 
 # Loop over the argument values for mmult_mpi_omp
