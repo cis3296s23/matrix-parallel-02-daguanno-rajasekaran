@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
             MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
             //for loop to send each stripe to a worker
-            for(k = 0; k < numprocs; k++) {
+            for(k = 0; k < numprocs - 1; k++) {
                 for (i = 0; i < stripesize; i++) {
                     for (j = 0; j < ncols; j++) {
                         buffer[i*ncols + j] = aa[(i + k * stripesize) * ncols + j];
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
             }
 
             //receive stripes
-            for (i = 0; i < numprocs; i++) {
+            for (i = 0; i < numprocs - 1; i++) {
                 MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, 
                 MPI_COMM_WORLD, &status);
             
