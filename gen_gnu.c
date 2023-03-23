@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     fp = fopen ("data.txt", "w+");
 
     if(unoptimized) {
-        for (int i = 0; i <= 2000; i = i + 50) {
+        for (int i = 0; i <= 6000; i = i + 60) {
             fprintf(fp, "%d ", i);
             
             //initialize timespec
@@ -55,7 +55,8 @@ int main(int argc, char *argv[]) {
     fprintf(fp, "\n\n");
 
     if(SIMD) {
-        for (int i = 0; i <= 2000; i = i + 50) {
+        for (int i = 0; i <= 6000; i = i + 60) {
+            printf("Calculating SIMD size: %d", i);
             fprintf(fp, "%d ", i);
             
             //initialize timespec
@@ -86,6 +87,7 @@ int main(int argc, char *argv[]) {
 
     if(OMP) {
         for (int i = 0; i <= 2000; i = i + 50) {
+            printf("Calculating OMP size: %d", i);
             fprintf(fp, "%d ", i);
             
             //initialize timespec
