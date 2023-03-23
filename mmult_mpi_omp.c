@@ -101,10 +101,6 @@ int main(int argc, char* argv[]) {
 
             printf("after second malloc\n");
 
-            for(i = 0; i < numprocs; i++) {
-                MPI_Send()
-            }
-
             //Scatter chunks to processes
             MPI_Scatterv(aa, stripes, startindex, MPI_DOUBLE, localmatrix, localrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
