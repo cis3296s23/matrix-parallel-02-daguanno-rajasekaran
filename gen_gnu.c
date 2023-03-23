@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
 
             free(a);
             free(b);
-            free(c_calc);s
+            free(c_calc);
         }
     //}
 
