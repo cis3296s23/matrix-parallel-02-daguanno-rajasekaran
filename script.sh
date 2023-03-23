@@ -29,7 +29,6 @@ step=60
 echo "running mpi"
 for ((i=start; i<=end; i+=step))
 do
-    echo "Calculating MPI size: $i"
     mpiexec -f ~/hosts -n 4 ./mmult_mpi $i
 done
 
@@ -37,6 +36,5 @@ done
 echo "running mpi omp"
 for ((i=start; i<=end; i+=step))
 do
-    echo "Calculating MPI_OMP size: $i"
     mpiexec -f ~/hosts -n 4 ./mmult_mpi_omp $i
 done
