@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     printf("generating gnuplot data file . . .\n");
 
     FILE * fp;
-    fp = fopen ("data.txt", "w+");
+    fp = fopen("data.txt", "w+");
 
     printf("file opened\n");
 
@@ -54,6 +54,8 @@ int main(int argc, char *argv[]) {
     } else { fprintf(fp, "0 0");}
 
     fprintf(fp, "\n\n");
+
+    printf("SIMD ->\n");
 
     if(SIMD) {
         for (int i = 0; i <= 6000; i = i + 60) {
