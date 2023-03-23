@@ -42,6 +42,13 @@ int main(int argc, char* argv[]) {
         //set stripesize to number of workers
         stripesize = ncols/numprocs;
 
+        
+        //malloc for cc1(answer matrix)
+        cc1 = malloc(sizeof(double) * nrows * ncols);
+
+        //initialize for loop iterators
+        int i, j, k;
+
         if (myid == 0) {// Controller Code goes here
             printf("matrix size: %d\n", ncols);
             printf("generate matrices\n");
@@ -50,42 +57,21 @@ int main(int argc, char* argv[]) {
             bb = gen_matrix(ncols, nrows);
 
             printf("generated matrices\n");
-
-            //malloc for cc1(answer matrix)
-            cc1 = malloc(sizeof(double) * nrows * ncols);
-
-            //initialize for loop iterators
-            int i, j, k;
         }
 
-        if(myid != 0) {
+        if(myid != 0) { //worker code
             printf("hi i am worker %d\n", myid);
 
             int rows_per_process = nrows / numprocs;
             int remaining_rows = nrows % numprocs;
 
+            //malloc for local_A and local_C
             int local_rows = rows_per_process + (myid < remaining_rows ? 1 : 0);
             double* local_A = (double*)malloc(local_rows * ncols * sizeof(double));
             double* local_C = (double*)malloc(local_rows * ncols * sizeof(double));
 
             printf("worker %d after malloc\n", myid);
-        }
 
-        if(myid == 0) {
-            //start mpi timing
-            starttime = MPI_Wtime();
-            /* Insert your controller code here to store the product into cc1 */
-
-            //broadcast bb (the matrix that each stripe is getting multiplied by)
-            MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-            MPI_Bcast(aa, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-            //break array up into pieces
-            int processrows = nrows / numprocs;
-            int leftoverrows = nrows %numprocs;
-        }
-
-        if(myid != 0) {
             //set local_A to the workers assigned stripe
             for(i = 0; i < stripesize; i++) {
                 local_A[i] += aa[myid * i];
@@ -110,7 +96,20 @@ int main(int argc, char* argv[]) {
             MPI_Bcast(cc1, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
         }
 
-        
+        if(myid == 0) { //controller code
+            //start mpi timing
+            starttime = MPI_Wtime();
+            /* Insert your controller code here to store the product into cc1 */
+
+            //broadcast bb (the matrix that each stripe is getting multiplied by)
+            MPI_Bcast(bb, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            MPI_Bcast(aa, nrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+            //break array up into pieces
+            int processrows = nrows / numprocs;
+            int leftoverrows = nrows %numprocs;
+        }
+
             // //malloc for local matrices
             // int localrows = processrows + (myid < leftoverrows ? 1 : 0);
             // double* localmatrix = (double*)malloc(sizeof(double) * ncols);
@@ -150,7 +149,6 @@ int main(int argc, char* argv[]) {
             MPI_Barrier(MPI_COMM_WORLD);
             print_matrix(cc1, nrows, ncols);
             MPI_Barrier(MPI_COMM_WORLD);
-            
             
             //end MPI timing
             printf("mpi timing\n");
