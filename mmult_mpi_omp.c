@@ -11,6 +11,8 @@ int main(int argc, char** argv) {
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
 
+  printf("Rank %d/%d: MPI initialized\n", rank, size);
+
   // Only run if there are enough processes to run in parallel
   if (size < 2) {
     if (rank == 0) {
@@ -19,6 +21,8 @@ int main(int argc, char** argv) {
     MPI_Finalize();
     exit(0);
   }
+
+  printf("Rank %d/%d: Matrix initialization started\n", rank, size);
 
   // Matrix A and B
   double A[MAT_SIZE][MAT_SIZE];
@@ -42,8 +46,12 @@ int main(int argc, char** argv) {
     }
   }
 
+  printf("Rank %d/%d: Matrix B broadcasting started\n", rank, size);
+
   // Distribute matrix B
   MPI_Bcast(B, MAT_SIZE * MAT_SIZE, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+  printf("Rank %d/%d: Matrix computation started\n", rank, size);
 
   // Divide work among processes using OpenMP
   #pragma omp parallel for shared(A, B, C)
@@ -56,8 +64,14 @@ int main(int argc, char** argv) {
     }
   }
 
+  printf("Rank %d/%d: Matrix computation finished\n", rank, size);
+
   // Gather results to the root process
-MPI_Gather(C[MAT_SIZE/size], MAT_SIZE * MAT_SIZE/size, MPI_DOUBLE, C, MAT_SIZE * MAT_SIZE/size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  int chunk_size = MAT_SIZE / size;
+  MPI_Gather(C[MAT_SIZE/size*rank], chunk_size * MAT_SIZE, MPI_DOUBLE, C, chunk_size * MAT_SIZE, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+  printf("Rank %d/%d: MPI gathering finished\n", rank, size);
+
   // Only the root process prints the result
   if (rank == 0) {
     printf("Result:\n");
@@ -68,6 +82,8 @@ MPI_Gather(C[MAT_SIZE/size], MAT_SIZE * MAT_SIZE/size, MPI_DOUBLE, C, MAT_SIZE *
       printf("\n");
     }
   }
+
+  printf("Rank %d/%d: MPI finalized\n", rank, size);
 
   MPI_Finalize();
   return 0;
