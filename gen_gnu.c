@@ -23,6 +23,8 @@ int main(int argc, char *argv[]) {
     FILE * fp;
     fp = fopen ("data.txt", "w+");
 
+    printf("file opened\n");
+
     if(unoptimized) {
         for (int i = 0; i <= 6000; i = i + 60) {
             fprintf(fp, "%d ", i);
