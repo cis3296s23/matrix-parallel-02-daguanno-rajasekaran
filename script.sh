@@ -14,8 +14,9 @@ echo "compiling mpi omp"
 mpicc -o mmult_mpi_omp -fopenmp -O3 mmult.o mmult_mpi_omp.o mat.c
 
 # Run the programs
-echo "running gen_gnu's"
+echo "running gen_gnu"
 ./gen_gnu >> data.txt
+echo "gen_gnu_O3"
 ./gen_gnu_O3 >> data.txt
 
 # Define the start and end values for the loop
