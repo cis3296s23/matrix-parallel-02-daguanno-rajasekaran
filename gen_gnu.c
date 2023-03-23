@@ -16,9 +16,8 @@ int main(int argc, char *argv[]) {
 
     //test which approaches
     bool unoptimized = false;
-    bool SIMD = false;
-    bool OMP = false;
-    bool MPI_OMP = true;
+    bool SIMD = true;
+    bool OMP = true;
 
     printf("generating gnuplot data file . . .\n");
 
@@ -51,7 +50,7 @@ int main(int argc, char *argv[]) {
             free(b);
             free(c_calc);
         }
-    }
+    } else { fprintf(fp, "0 0");}
 
     fprintf(fp, "\n\n");
 
@@ -115,33 +114,7 @@ int main(int argc, char *argv[]) {
 
     fprintf(fp, "\n\n");
 
-    if(MPI_OMP) {
-        for (int i = 0; i <= 2000; i = i + 50) {
-            fprintf(fp, "%d ", i);
-            
-            //initialize timespec
-            struct timespec tpe, tps;
-
-            //allocate memory for target matrix calculation
-            double *a = malloc(i * i * sizeof(double));
-            double *b = malloc(i * i * sizeof(double));
-
-            //generate matrices
-            a = gen_matrix(i, i);
-            b = gen_matrix(i, i);
-            double *c_calc = malloc(i * i * sizeof(double));
-
-            //time matrix multiplication
-            clock_gettime(CLOCK_REALTIME, &tps);
-            mmult_omp_mpi(c_calc, a, i, i, b, i, i);
-            clock_gettime(CLOCK_REALTIME, &tpe);
-            fprintf(fp, "%f\n", deltaTime(&tps, &tpe));
-
-            free(a);
-            free(b);
-            free(c_calc);
-        }
-    }
+    fclose(fp);
 
     printf("gnuplot data file complete\n");
 }

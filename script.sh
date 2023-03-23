@@ -1,5 +1,34 @@
-!# /bin/bash
-i = 50
-mpicc mpicc -o mmult_mpi_omp -fopenmp -O3 mmult.o mmult_mpi_omp.o mat.c
+#!/bin/bash
 
-mpiexec -f ~/hosts -n 4 ./mmult_mpi_omp 4000
+# Compile gen_gnu.c and gen_gnu_O3.c
+gcc -o gen_gnu gen_gnu.c
+gcc -o gen_gnu_O3 -O3 gen_gnu_O3.c
+
+# Compile mmult_mpi.c with MPI
+mpicc -o mmult_mpi -fopenmp -O3 mmult.o mmult_mpi_omp.o mat.c
+
+# Compile mmult_mpi_omp.c with MPI and OpenMP
+mpicc -o mmult_mpi_omp -fopenmp -O3 mmult.o mmult_mpi_omp.o mat.c
+
+# Run the programs
+./gen_gnu >> data.txt
+./gen_gnu_O3 >> data.txt
+
+# Define the start and end values for the loop
+start=60
+end=6000
+step=60
+
+# Loop over the argument values for mmult_mpi
+for ((i=start; i<=end; i+=step))
+do
+    echo "Running mmult_mpi with $i argument(s)..."
+    mpiexec -f ~/hosts -n 4 ./mmult_mpi_omp $i >> data.txt
+done
+
+# Loop over the argument values for mmult_mpi_omp
+for ((i=start; i<=end; i+=step))
+do
+    echo "Running mmult_mpi_omp with $i argument(s)..."
+    mpiexec -f ~/hosts -n 4 ./mmult_mpi_omp $i >> data.txt
+done

@@ -4,7 +4,6 @@
 #include <time.h>
 #include <sys/times.h>
 
-
 #include "mat.h"
 
 int main(int argc, char* argv[])
@@ -114,10 +113,8 @@ int main(int argc, char* argv[])
                     MPI_COMM_WORLD, &status);
             int stripe = status.MPI_TAG;
 
-            //omp matrix mult of buffer(stripe) and bb to a
+            //matrix mult of buffer(stripe) and bb to a
             int i, j, k = 0;
-            #pragma omp parallel default(none) shared(a, bb, buffer, stripesize, ncols, nrows) private(i, k, j,stripe)
-            #pragma omp for
             for (i = 0; i < stripesize; i++) {
                 for (j = 0; j < nrows; j++) {
                     a[i * nrows + j] = 0;
@@ -136,7 +133,5 @@ int main(int argc, char* argv[])
         fprintf(stderr, "Usage mmult_mpi_omp <size>\n");
     }
     MPI_Finalize();
-
-    fclose(fp);
     return 0;
 }
