@@ -57,8 +57,7 @@ int main(int argc, char** argv) {
   }
 
   // Gather results to the root process
-  MPI_Gather(C[MAT_SIZE/sizerank], MAT_SIZE MAT_SIZE/size, MPI_DOUBLE, C, MAT_SIZE * MAT_SIZE/size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
+MPI_Gather(C[MAT_SIZE/sizerank], MAT_SIZE MAT_SIZE/size, MPI_DOUBLE, C, MAT_SIZE * MAT_SIZE/size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
   // Only the root process prints the result
   if (rank == 0) {
     printf("Result:\n");
