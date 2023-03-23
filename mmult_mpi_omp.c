@@ -162,13 +162,13 @@ int main(int argc, char* argv[]) {
 
             printf("worker %d after Scatter\n", myid);
 
-            //bb = (double*)realloc(bb, ncols * nrows * sizeof(double));
+            bb = (double*)realloc(bb, ncols * nrows * sizeof(double));
 
-            //printf("worker %d after realloc\n", myid);
+            printf("worker %d after realloc\n", myid);
 
-            //MPI_Bcast(bb, ncols * nrows, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            MPI_Bcast(bb, ncols * nrows, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-            //printf("worker %d after bcast\n", myid);
+            printf("worker %d after bcast\n", myid);
 
             // Perform local matrix multiplication
             for (int i = 0; i < local_rows; i++) {
