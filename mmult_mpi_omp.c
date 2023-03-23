@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
             
             //end MPI timing
             endtime = MPI_Wtime();
-            printf("Calculating MPI size: %d, time = %f", ncols, (endtime - starttime));
+            printf("Calculating MPI size: %d, time = %f\n", ncols, (endtime - starttime));
             fprintf(fp, "%f\n",(endtime - starttime));
 
             //compare matrices with normal mmult
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
 
             //recieve buffer
             MPI_Recv(buffer, ncols * stripesize, MPI_DOUBLE, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-            
+
             int stripe = status.MPI_TAG;
 
             //omp matrix mult of buffer(stripe) and bb to a
