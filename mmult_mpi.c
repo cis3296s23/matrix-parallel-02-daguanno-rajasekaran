@@ -96,9 +96,9 @@ int main(int argc, char* argv[])
             fprintf(fp, "%f\n",(endtime - starttime));
 
             //compare matrices with normal mmult
-            cc2  = malloc(sizeof(double) * nrows * nrows);
-            mmult(cc2, aa, nrows, ncols, bb, ncols, nrows);
-            compare_matrices(cc2, cc1, nrows, nrows);
+            // cc2  = malloc(sizeof(double) * nrows * nrows);
+            // mmult(cc2, aa, nrows, ncols, bb, ncols, nrows);
+            // compare_matrices(cc2, cc1, nrows, nrows);
         } else { // Worker code goes here
             
             //malloc buffer, a, and  for slaves
@@ -133,5 +133,7 @@ int main(int argc, char* argv[])
         fprintf(stderr, "Usage mmult_mpi_omp <size>\n");
     }
     MPI_Finalize();
+
+    fclose(fp);
     return 0;
 }

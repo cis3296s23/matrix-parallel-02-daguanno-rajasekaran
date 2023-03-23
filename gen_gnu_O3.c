@@ -47,5 +47,7 @@ int main(int argc, char *argv[]) {
 
     fprintf(fp, "\n\n");
 
+    fclose(fp);
+
     printf("gnuplot O3 data file complete\n");
 }
