@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 
     printf("SIMD ->\n");
 
-    //if(SIMD) {
+    if(SIMD) {
         for (i = 0; i <= 3000; i = i + 60) {
             printf("Calculating SIMD size: %d", i);
             fprintf(fp, "%d ", i);
@@ -90,13 +90,13 @@ int main(int argc, char *argv[]) {
             free(b);
             free(c_calc);
         }
-    //}
+    }
 
     fprintf(fp, "\n\n");
 
     printf("OMP ->\n");
 
-    //if(OMP) {
+    if(OMP) {
         for (i = 0; i <= 3000; i = i + 60) {
             printf("Calculating OMP size: %d", i);
             fprintf(fp, "%d ", i);
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
             free(b);
             free(c_calc);
         }
-    //}
+    }
 
     fprintf(fp, "\n\n");
 

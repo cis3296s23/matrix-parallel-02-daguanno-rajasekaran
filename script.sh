@@ -2,7 +2,7 @@
 
 # Compile gen_gnu.c and gen_gnu_O3.c
 echo "compiling gen_gnu"
-gcc -o gen_gnu gen_gnu.c -D_POSIX_C_SOURCE=199309L -lrt -std=c11
+gcc -o gen_gnu gen_gnu.c -D_POSIX_C_SOURCE=199309L -lrt -std=c11 -fopenmp
 echo "compiling gen_gnu_O3"
 gcc -O3 gen_gnu_O3.c -o gen_gnu_O3
 
