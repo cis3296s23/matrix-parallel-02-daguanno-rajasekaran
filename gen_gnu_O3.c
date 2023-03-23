@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
         }
     } else { fprintf(fp, "0 0");}
 
-    fprintf(fp, "\n\n");
+    fprintf(fp, "\n\n\n");
 
     fclose(fp);
 
