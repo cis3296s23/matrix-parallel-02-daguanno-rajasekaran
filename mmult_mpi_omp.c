@@ -101,6 +101,10 @@ int main(int argc, char* argv[]) {
 
             printf("after second malloc\n");
 
+            for(i = 0; i < numprocs; i++) {
+                MPI_Send()
+            }
+
             //Scatter chunks to processes
             MPI_Scatterv(aa, stripes, startindex, MPI_DOUBLE, localmatrix, localrows * ncols, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
@@ -145,8 +149,6 @@ int main(int argc, char* argv[]) {
 
         } else { // Worker code goes here
 
-            MPI_Probe(0, myid, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-
             printf("hi i am worker %d\n", myid);
 
             int rows_per_process = nrows / numprocs;
@@ -180,7 +182,8 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            printf("worker %d after matrix mult\n", myid);
+            printf("worker %d matrix mult\n", myid);
+            print_matrix(local_C, nrows, ncols);
 
             free(local_A);
             free(local_C);
