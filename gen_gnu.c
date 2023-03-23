@@ -11,12 +11,17 @@
 #include "mat.c"
 #include "mat.h"
 
+#define CLOCK_REALTIME 0
+#define _POSIX_C_SOURCE 199309L
+
 int main(int argc, char *argv[]) {
 
     //test which approaches
     bool unoptimized = false;
     bool SIMD = true;
     bool OMP = true;
+
+    int i = 0;
 
     printf("generating gnuplot data file . . .\n");
 
@@ -26,7 +31,7 @@ int main(int argc, char *argv[]) {
     printf("file opened\n");
 
     if(unoptimized) {
-        for (int i = 0; i <= 6000; i = i + 60) {
+        for (i = 0; i <= 6000; i = i + 60) {
             fprintf(fp, "%d ", i);
             
             //initialize timespec
@@ -58,7 +63,7 @@ int main(int argc, char *argv[]) {
     printf("SIMD ->\n");
 
     //if(SIMD) {
-        for (int i = 0; i <= 3000; i = i + 60) {
+        for (i = 0; i <= 3000; i = i + 60) {
             printf("Calculating SIMD size: %d", i);
             fprintf(fp, "%d ", i);
             
@@ -78,6 +83,7 @@ int main(int argc, char *argv[]) {
             clock_gettime(CLOCK_REALTIME, &tps);
             mmult_simd(c_calc, a, i, i, b, i, i);
             clock_gettime(CLOCK_REALTIME, &tpe);
+            printf(", time = %f \n", deltaTime(&tps, &tpe));
             fprintf(fp, "%f\n", deltaTime(&tps, &tpe));
 
             free(a);
@@ -89,7 +95,7 @@ int main(int argc, char *argv[]) {
     fprintf(fp, "\n\n");
 
     //if(OMP) {
-        for (int i = 0; i <= 3000; i = i + 60) {
+        for (i = 0; i <= 3000; i = i + 60) {
             printf("Calculating OMP size: %d", i);
             fprintf(fp, "%d ", i);
             
@@ -109,6 +115,7 @@ int main(int argc, char *argv[]) {
             clock_gettime(CLOCK_REALTIME, &tps);
             mmult_omp(c_calc, a, i, i, b, i, i);
             clock_gettime(CLOCK_REALTIME, &tpe);
+            printf(", time = %f \n", deltaTime(&tps, &tpe));
             fprintf(fp, "%f\n", deltaTime(&tps, &tpe));
 
             free(a);
