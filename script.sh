@@ -2,8 +2,8 @@
 
 # Compile gen_gnu.c and gen_gnu_O3.c
 echo "compiling gen_gnu's"
-gcc gen_gnu.c mmult.c mat.c -lm -o gen_gnu
-gcc -O3 gen_gnu_O3.c mmult.c mat.c -lm -o gen_gnu_O3
+gcc gen_gnu.c mat.c -lm -o gen_gnu
+gcc -O3 gen_gnu_O3.c mat.c -lm -o gen_gnu_O3
 
 # Compile mmult_mpi.c with MPI
 echo "compiling mpi"
