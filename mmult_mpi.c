@@ -135,7 +135,6 @@ int main(int argc, char* argv[])
     }
     MPI_Finalize();
 
-    fprintf(fp, "\n\n\n");
     fclose(fp);
     return 0;
 }

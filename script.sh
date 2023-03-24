@@ -32,6 +32,12 @@ do
     mpiexec -f ~/hosts -n 4 ./mmult_mpi $i
 done
 
+cat >> data.txt << EOF
+
+
+
+EOF
+
 # Loop over the argument values for mmult_mpi_omp
 echo "running mpi omp"
 for ((i=start; i<=end; i+=step))
