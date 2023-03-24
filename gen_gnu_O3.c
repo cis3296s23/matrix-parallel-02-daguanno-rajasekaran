@@ -13,7 +13,7 @@
 int main(int argc, char *argv[]) {
 
     //option to skip
-    bool SIMD = false;
+    bool SIMD = true;
 
     printf("generating gnuplot O3 data file . . .\n");
 

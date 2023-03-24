@@ -18,8 +18,8 @@ int main(int argc, char *argv[]) {
 
     //test which approaches
     bool unoptimized = false;
-    bool SIMD = false;
-    bool OMP = false;
+    bool SIMD = true;
+    bool OMP = true;
 
     int i = 0;
 
